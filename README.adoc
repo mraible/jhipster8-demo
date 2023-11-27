@@ -45,7 +45,7 @@ JHipster is one of those open-source projects you stumble upon and immediately t
 
 https://www.julien-dubois.com/[Julien Dubois] started JHipster in October 2013 (Julien's first commit was on https://github.com/jhipster/generator-jhipster/commit/c8630ab7af7b6a99db880b3b0e2403806b7d2436[October 21, 2013]). The first public release (version 0.3.1) launched on December 7, 2013. Since then, the project has had over 200 releases! It is an open-source, Apache 2.0-licensed project on GitHub. It has a core team of 38 developers and over 600 contributors. You can find its homepage at https://www.jhipster.tech/[www.jhipster.tech]. If you look at https://github.com/jhipster/generator-jhipster[the project on GitHub], you can see it's mostly written in JavaScript (52%), TypeScript (19.8%), and Java (17.7%).
 
-JHipster 8 is the same JHipster many developers know and love, with a couple of bright and shiny new features: namely Spring Boot 3, Angular 16, Vue 3, and Java 21 support.
+JHipster 8 is the same JHipster many developers know and love, with a couple of bright and shiny new features: namely Spring Boot 3.2, Angular 17, Vue 3, and Java 21 support.
 
 == Install JHipster 8
 
@@ -71,48 +71,42 @@ If you'd like to create the same application I did, you can place the following 
 ----
 {
   "generator-jhipster": {
-    "blueprints": [],
-    "otherModules": [],
     "applicationType": "monolith",
-    "baseName": "blog",
-    "jhipsterVersion": "8.0.0",
-    "skipClient": false,
-    "skipServer": false,
-    "skipUserManagement": false,
-    "skipCheckLengthOfIdentifier": false,
-    "skipFakeData": false,
-    "jhiPrefix": "jhi",
-    "entitySuffix": "",
-    "dtoSuffix": "DTO",
-    "testFrameworks": ["cypress"],
-    "pages": [],
-    "creationTimestamp": 1619451584671,
-    "serviceDiscoveryType": false,
-    "reactive": false,
     "authenticationType": "jwt",
-    "packageName": "org.jhipster.blog",
-    "serverPort": "8080",
+    "baseName": "blog",
+    "buildTool": "maven",
     "cacheProvider": "ehcache",
-    "enableHibernateCache": true,
+    "clientFramework": "angular",
+    "clientTestFrameworks": ["cypress"],
+    "clientTheme": "none",
+    "creationTimestamp": 1701088333195,
+    "cypressAudit": true,
+    "cypressCoverage": true,
     "databaseType": "sql",
     "devDatabaseType": "h2Disk",
-    "prodDatabaseType": "postgresql",
-    "buildTool": "maven",
-    "serverSideOptions": [],
-    "websocket": false,
-    "searchEngine": false,
-    "messageBroker": false,
+    "devServerPort": 4200,
+    "enableGradleEnterprise": null,
+    "enableHibernateCache": true,
     "enableSwaggerCodegen": false,
-    "clientFramework": "angularX",
-    "withAdminUi": true,
-    "clientTheme": "none",
     "enableTranslation": true,
+    "entities": [],
+    "gradleEnterpriseHost": null,
+    "jhipsterVersion": "8.0.0",
+    "languages": ["en", "es"],
+    "messageBroker": false,
+    "microfrontend": null,
+    "microfrontends": [],
     "nativeLanguage": "en",
-    "packageFolder": "org/jhipster/blog",
-    "jwtSecretKey": "ZGM4ZTY3ZDk5MjE3NjA0ZDcxOWYxOGVkYzg4YTBjNDYyOGVhNjdjMjY0MzIyMjNlZDEzNzM5ZDVkYWQ2NWI0OTdiMmJlNDIxZTc4MTc5MmYxYjkzODEzYTQ4YmY5NTU5MjczNTA4YmE4YWFkNDg3NDRiOWJhYjgxYjhkOTBjNzg=",
-    "clientPackageManager": "npm",
-    "clientThemeVariant": "",
-    "languages": ["en", "es"]
+    "packageName": "org.jhipster.blog",
+    "prodDatabaseType": "postgresql",
+    "reactive": false,
+    "searchEngine": false,
+    "serverPort": null,
+    "serverSideOptions": [],
+    "serviceDiscoveryType": false,
+    "testFrameworks": ["cypress"],
+    "websocket": false,
+    "withAdminUi": true
   }
 }
 ----
