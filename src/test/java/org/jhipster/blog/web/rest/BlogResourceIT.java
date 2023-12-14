@@ -77,8 +77,8 @@ class BlogResourceIT {
      * if they test an entity which requires the current entity.
      */
     public Blog createEntity(EntityManager em) {
-        Optional<User> user = userRepository.findOneByLogin("user");
         Blog blog = new Blog().name(DEFAULT_NAME).handle(DEFAULT_HANDLE);
+        Optional<User> user = userRepository.findOneByLogin("user");
         if (user.isPresent()) {
             blog.setUser(user.orElse(null));
         } else {

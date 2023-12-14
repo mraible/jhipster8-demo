@@ -11,6 +11,7 @@ The brackets at the end of each step indicate the alias's or IntelliJ Live Templ
   package: org.jhipster.blog
   authenticationType: JWT
   prodDatabaseType: PostgreSQL
+  devDatabaseType: H2Disk
   languages: en,es
   testFrameworks: Cypress
 
@@ -38,6 +39,8 @@ The brackets at the end of each step indicate the alias's or IntelliJ Live Templ
 
   return blogRepository.findByUserIsCurrentUser()
 
+. In `BlogRepository`, add a where clause to the `findAllWithToOneRelationships()` method
+
 . Show how blog list screen limits data to current user
 
 . Edit `PostResource.java` and change `getAllPosts()` [`jh-findBy`]
@@ -45,6 +48,10 @@ The brackets at the end of each step indicate the alias's or IntelliJ Live Templ
   page = postRepository.findByBlogUserLoginOrderByDateDesc(SecurityUtils.getCurrentUserLogin().orElse(null), pageable);
 
 . Using your IDE, create this method in `PostRepository`
+
+. Add a where clause to the `PostRepository#findAllWithToOneRelationships()` method
+
+  where post.blog.user.login = ?#{authentication.name}
 
 . Recompile both classes and verify entries are limited to current user
 
@@ -70,10 +77,17 @@ The brackets at the end of each step indicate the alias's or IntelliJ Live Templ
   private UserRepository userRepository;
 
   public Blog createEntity(EntityManager em) {
-      Blog blog = new Blog()
-              .name(DEFAULT_NAME)
-              .handle(DEFAULT_HANDLE)
-              .user(userRepository.findOneByLogin("user").get());
+      Blog blog = new Blog().name(DEFAULT_NAME).handle(DEFAULT_HANDLE);
+      Optional<User> user = userRepository.findOneByLogin("user");
+      if (user.isPresent()) {
+          blog.setUser(user.orElse(null));
+      } else {
+          User newuser = new User();
+          newuser.setLogin("user"); // username used by @WithMockUser
+          newuser.setPassword(RandomStringUtils.randomAlphanumeric(60));
+          userRepository.saveAndFlush(newuser);
+          blog.setUser(newuser);
+      }
       return blog;
   }
 

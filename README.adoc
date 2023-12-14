@@ -410,7 +410,7 @@ You can further enhance the security of your API by only allowing users that own
 ----
 Optional<Blog> blog = blogRepository.findById(id);
 if (<blog.user does not match current user>) {
-    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "error.http.403");
+    throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 }
 return ResponseUtil.wrapOrNotFound(blog);
 ----
