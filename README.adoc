@@ -165,6 +165,8 @@ JHipster supports several methods of code generation. The first uses its https:/
 
 https://start.jhipster.tech/jdl-studio/[JDL-Studio] is a browser-based tool for defining your domain model with JHipster Domain Language (JDL). I like the visual nature of JDL-Studio, so I'll use it for this project.
 
+TIP: A fantastic alternative to JDL Studio is the https://plugins.jetbrains.com/plugin/19697-jhipster-jdl[JHipster JDL Plugin for IntelliJ IDEA]. https://twitter.com/Yuriy_Artamonov[Yuriy Artamonov] created and maintains this plugin. It's a great way to visualize your JDL and generate entities.
+
 Below is the entity diagram and JDL code needed to generate a simple blog with blogs, posts, and tags.
 
 .Blog entity diagram
