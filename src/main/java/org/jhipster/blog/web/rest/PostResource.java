@@ -17,9 +17,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -59,6 +61,13 @@ public class PostResource {
         if (post.getId() != null) {
             throw new BadRequestAlertException("A new post cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        if (
+            post.getBlog() != null &&
+            post.getBlog().getUser() != null &&
+            !post.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         Post result = postRepository.save(post);
         return ResponseEntity
             .created(new URI("/api/posts/" + result.getId()))
@@ -69,7 +78,7 @@ public class PostResource {
     /**
      * {@code PUT  /posts/:id} : Updates an existing post.
      *
-     * @param id the id of the post to save.
+     * @param id   the id of the post to save.
      * @param post the post to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated post,
      * or with status {@code 400 (Bad Request)} if the post is not valid,
@@ -86,9 +95,15 @@ public class PostResource {
         if (!Objects.equals(id, post.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!postRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        if (
+            post.getBlog() != null &&
+            post.getBlog().getUser() != null &&
+            !post.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         Post result = postRepository.save(post);
@@ -101,7 +116,7 @@ public class PostResource {
     /**
      * {@code PATCH  /posts/:id} : Partial updates given fields of an existing post, field will ignore if it is null
      *
-     * @param id the id of the post to save.
+     * @param id   the id of the post to save.
      * @param post the post to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated post,
      * or with status {@code 400 (Bad Request)} if the post is not valid,
@@ -121,9 +136,11 @@ public class PostResource {
         if (!Objects.equals(id, post.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!postRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        if (post.getBlog() != null && !post.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         Optional<Post> result = postRepository
@@ -152,7 +169,7 @@ public class PostResource {
     /**
      * {@code GET  /posts} : get all the posts.
      *
-     * @param pageable the pagination information.
+     * @param pageable  the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of posts in body.
      */
@@ -182,6 +199,15 @@ public class PostResource {
     public ResponseEntity<Post> getPost(@PathVariable("id") Long id) {
         log.debug("REST request to get Post : {}", id);
         Optional<Post> post = postRepository.findOneWithEagerRelationships(id);
+        if (post.isPresent()) {
+            post
+                .filter(p ->
+                    p.getBlog() != null &&
+                    p.getBlog().getUser() != null &&
+                    p.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+                )
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
+        }
         return ResponseUtil.wrapOrNotFound(post);
     }
 
@@ -194,6 +220,10 @@ public class PostResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable("id") Long id) {
         log.debug("REST request to delete Post : {}", id);
+        Optional<Post> post = postRepository.findById(id);
+        post
+            .filter(p -> p.getBlog() != null && p.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse("")))
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
         postRepository.deleteById(id);
         return ResponseEntity
             .noContent()

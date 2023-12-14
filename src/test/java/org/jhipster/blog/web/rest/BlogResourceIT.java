@@ -9,11 +9,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jhipster.blog.IntegrationTest;
 import org.jhipster.blog.domain.Blog;
+import org.jhipster.blog.domain.User;
 import org.jhipster.blog.repository.BlogRepository;
+import org.jhipster.blog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,6 +63,9 @@ class BlogResourceIT {
     private EntityManager em;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private MockMvc restBlogMockMvc;
 
     private Blog blog;
@@ -69,8 +76,18 @@ class BlogResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Blog createEntity(EntityManager em) {
+    public Blog createEntity(EntityManager em) {
+        Optional<User> user = userRepository.findOneByLogin("user");
         Blog blog = new Blog().name(DEFAULT_NAME).handle(DEFAULT_HANDLE);
+        if (user.isPresent()) {
+            blog.setUser(user.orElse(null));
+        } else {
+            User newuser = new User();
+            newuser.setLogin("user"); // username used by @WithMockUser
+            newuser.setPassword(RandomStringUtils.randomAlphanumeric(60));
+            userRepository.saveAndFlush(newuser);
+            blog.setUser(newuser);
+        }
         return blog;
     }
 

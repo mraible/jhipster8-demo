@@ -11,11 +11,17 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jhipster.blog.IntegrationTest;
+import org.jhipster.blog.domain.Blog;
 import org.jhipster.blog.domain.Post;
+import org.jhipster.blog.domain.User;
+import org.jhipster.blog.repository.BlogRepository;
 import org.jhipster.blog.repository.PostRepository;
+import org.jhipster.blog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,6 +70,12 @@ class PostResourceIT {
     private EntityManager em;
 
     @Autowired
+    private BlogRepository blogRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private MockMvc restPostMockMvc;
 
     private Post post;
@@ -74,8 +86,21 @@ class PostResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Post createEntity(EntityManager em) {
+    public Post createEntity(EntityManager em) {
         Post post = new Post().title(DEFAULT_TITLE).content(DEFAULT_CONTENT).date(DEFAULT_DATE);
+        Optional<User> user = userRepository.findOneByLogin("user");
+        Blog blog = new Blog().name("test").handle("test");
+        if (user.isPresent()) {
+            blog.setUser(user.orElse(null));
+        } else {
+            User newuser = new User();
+            newuser.setLogin("user"); // username used by @WithMockUser
+            newuser.setPassword(RandomStringUtils.randomAlphanumeric(60));
+            userRepository.saveAndFlush(newuser);
+            blog.setUser(newuser);
+        }
+        blogRepository.saveAndFlush(blog);
+        post.setBlog(blog);
         return post;
     }
 
