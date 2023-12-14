@@ -35,7 +35,16 @@ describe('Post e2e test', () => {
         method: 'DELETE',
         url: `/api/posts/${post.id}`,
       }).then(() => {
-        post = undefined;
+        if (post.blog.id) {
+          cy.authenticatedRequest({
+            method: 'DELETE',
+            url: `/api/blogs/${post.blog.id}`,
+          }).then(() => {
+            post = undefined;
+          });
+        } else {
+          post = undefined;
+        }
       });
     }
   });
@@ -76,6 +85,17 @@ describe('Post e2e test', () => {
 
     describe('with existing value', () => {
       beforeEach(() => {
+        cy.visit('blog');
+        cy.get(entityCreateButtonSelector).click();
+        cy.get('[data-cy="name"]').type('User blog');
+        cy.get('[data-cy="handle"]').type(username);
+        cy.get('[data-cy="user"]').select(username);
+        cy.get(entityCreateSaveButtonSelector).click();
+        cy.get('.alert-success > pre').then($value => {
+          const blogId = /\b(\w+)$/.exec($value.text())[1];
+          postSample.blog = { id: blogId, user: { id: 2, login: username } };
+        });
+
         cy.authenticatedRequest({
           method: 'POST',
           url: '/api/posts',
@@ -169,6 +189,7 @@ describe('Post e2e test', () => {
       cy.get(`[data-cy="date"]`).type('2023-12-13T09:56');
       cy.get(`[data-cy="date"]`).blur();
       cy.get(`[data-cy="date"]`).should('have.value', '2023-12-13T09:56');
+      cy.get('[data-cy="blog"]').select(1);
 
       cy.get(entityCreateSaveButtonSelector).click();
 

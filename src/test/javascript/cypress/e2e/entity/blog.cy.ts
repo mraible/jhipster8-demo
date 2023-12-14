@@ -15,7 +15,7 @@ describe('Blog e2e test', () => {
   const blogPageUrlPattern = new RegExp('/blog(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const blogSample = { name: 'lunch optimistically', handle: 'unrealistic' };
+  const blogSample = { name: 'lunch optimistically', handle: 'unrealistic', user: { id: 2, login: username } };
 
   let blog;
 
@@ -162,6 +162,7 @@ describe('Blog e2e test', () => {
 
       cy.get(`[data-cy="handle"]`).type('within');
       cy.get(`[data-cy="handle"]`).should('have.value', 'within');
+      cy.get('[data-cy="user"]').select(username);
 
       cy.get(entityCreateSaveButtonSelector).click();
 
