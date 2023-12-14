@@ -415,128 +415,100 @@ if (<blog.user does not match current user>) {
 return ResponseUtil.wrapOrNotFound(blog);
 ----
 
-Below is the refactored `BlogResource.java` with additional logic in each method to prevent data tampering.
+Below is the patched `BlogResource.java` with additional logic in each method to prevent data tampering.
 
-.src/main/java/org/jhipster/blog/web/rest/BlogResource.java
-[source,java]
+[source,patch]
 ----
-@PostMapping("")
-public ResponseEntity<Blog> createBlog(@Valid @RequestBody Blog blog) throws URISyntaxException {
-    log.debug("REST request to save Blog : {}", blog);
-    if (blog.getId() != null) {
-        throw new BadRequestAlertException("A new blog cannot already have an ID", ENTITY_NAME, "idexists");
-    }
-    if (!blog.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden");
-    }
-    Blog result = blogRepository.save(blog);
-    return ResponseEntity
-        .created(new URI("/api/blogs/" + result.getId()))
-        .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-        .body(result);
-}
+Index: src/main/java/org/jhipster/blog/web/rest/BlogResource.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/jhipster/blog/web/rest/BlogResource.java b/src/main/java/org/jhipster/blog/web/rest/BlogResource.java
+--- a/src/main/java/org/jhipster/blog/web/rest/BlogResource.java	(revision cec781478967455ce85659b5e188005fdfb0df91)
++++ b/src/main/java/org/jhipster/blog/web/rest/BlogResource.java	(date 1702532770536)
+@@ -9,13 +9,16 @@
+ import java.util.Optional;
+ import org.jhipster.blog.domain.Blog;
+ import org.jhipster.blog.repository.BlogRepository;
++import org.jhipster.blog.security.SecurityUtils;
+ import org.jhipster.blog.web.rest.errors.BadRequestAlertException;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Value;
++import org.springframework.http.HttpStatus;
+ import org.springframework.http.ResponseEntity;
+ import org.springframework.transaction.annotation.Transactional;
+ import org.springframework.web.bind.annotation.*;
++import org.springframework.web.server.ResponseStatusException;
+ import tech.jhipster.web.util.HeaderUtil;
+ import tech.jhipster.web.util.ResponseUtil;
 
-@PutMapping("/{id}")
-public ResponseEntity<Blog> updateBlog(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Blog blog)
-    throws URISyntaxException {
-    log.debug("REST request to update Blog : {}, {}", id, blog);
-    if (blog.getId() == null) {
-        throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-    }
-    if (!Objects.equals(id, blog.getId())) {
-        throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-    }
-    if (!blogRepository.existsById(id)) {
-        throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-    }
-    if (blog.getUser() != null && !blog.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden");
-    }
+@@ -53,6 +56,9 @@
+         if (blog.getId() != null) {
+             throw new BadRequestAlertException("A new blog cannot already have an ID", ENTITY_NAME, "idexists");
+         }
++        if (!blog.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
++            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
++        }
+         Blog result = blogRepository.save(blog);
+         return ResponseEntity
+             .created(new URI("/api/blogs/" + result.getId()))
+@@ -80,10 +86,12 @@
+         if (!Objects.equals(id, blog.getId())) {
+             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+         }
+-
+         if (!blogRepository.existsById(id)) {
+             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+         }
++        if (blog.getUser() != null && !blog.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
++            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
++        }
 
-    Blog result = blogRepository.save(blog);
-    return ResponseEntity
-        .ok()
-        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, blog.getId().toString()))
-        .body(result);
-}
+         Blog result = blogRepository.save(blog);
+         return ResponseEntity
+@@ -115,10 +123,12 @@
+         if (!Objects.equals(id, blog.getId())) {
+             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+         }
+-
+         if (!blogRepository.existsById(id)) {
+             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+         }
++        if (blog.getUser() != null && !blog.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
++            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
++        }
 
-@PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-public ResponseEntity<Blog> partialUpdateBlog(
-    @PathVariable(value = "id", required = false) final Long id,
-    @NotNull @RequestBody Blog blog
-) throws URISyntaxException {
-    log.debug("REST request to partial update Blog partially : {}, {}", id, blog);
-    if (blog.getId() == null) {
-        throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-    }
-    if (!Objects.equals(id, blog.getId())) {
-        throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-    }
-    if (!blogRepository.existsById(id)) {
-        throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-    }
-    if (blog.getUser() != null && !blog.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden");
-    }
+         Optional<Blog> result = blogRepository
+             .findById(blog.getId())
+@@ -166,6 +176,11 @@
+     public ResponseEntity<Blog> getBlog(@PathVariable("id") Long id) {
+         log.debug("REST request to get Blog : {}", id);
+         Optional<Blog> blog = blogRepository.findOneWithEagerRelationships(id);
++        if (blog.isPresent()) {
++            blog
++                .filter(b -> b.getUser() != null && b.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse("")))
++                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
++        }
+         return ResponseUtil.wrapOrNotFound(blog);
+     }
 
-    Optional<Blog> result = blogRepository
-        .findById(blog.getId())
-        .map(existingBlog -> {
-            if (blog.getName() != null) {
-                existingBlog.setName(blog.getName());
-            }
-            if (blog.getHandle() != null) {
-                existingBlog.setHandle(blog.getHandle());
-            }
+@@ -178,6 +193,10 @@
+     @DeleteMapping("/{id}")
+     public ResponseEntity<Void> deleteBlog(@PathVariable("id") Long id) {
+         log.debug("REST request to delete Blog : {}", id);
++        Optional<Blog> blog = blogRepository.findById(id);
++        blog
++            .filter(b -> b.getUser() != null && b.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse("")))
++            .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
+         blogRepository.deleteById(id);
+         return ResponseEntity
+             .noContent()
 
-            return existingBlog;
-        })
-        .map(blogRepository::save);
-
-    return ResponseUtil.wrapOrNotFound(
-        result,
-        HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, blog.getId().toString())
-    );
-}
-
-@GetMapping("")
-public List<Blog> getAllBlogs(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
-    log.debug("REST request to get all Blogs");
-    if (eagerload) {
-        return blogRepository.findAllWithEagerRelationships();
-    } else {
-        return blogRepository.findByUserIsCurrentUser();
-    }
-}
-
-@GetMapping("/{id}")
-public ResponseEntity<Blog> getBlog(@PathVariable("id") Long id) {
-    log.debug("REST request to get Blog : {}", id);
-    Optional<Blog> blog = blogRepository.findOneWithEagerRelationships(id);
-    if (blog.isPresent()) {
-        blog
-            .filter(b -> b.getUser() != null && b.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse("")))
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden"));
-    }
-    return ResponseUtil.wrapOrNotFound(blog);
-}
-
-@DeleteMapping("/{id}")
-public ResponseEntity<Blog> deleteBlog(@PathVariable("id") Long id) {
-    log.debug("REST request to delete Blog : {}", id);
-    Optional<Blog> blog = blogRepository.findById(id);
-    blog
-        .filter(b -> b.getUser() != null && b.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse("")))
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden"));
-    blogRepository.deleteById(id);
-    return ResponseEntity
-        .noContent()
-        .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-        .build();
-}
 ----
 
-You'll need to make similar changes in `PostResource.java`. See https://github.com/mraible/jhipster8-demo/commit/tbd[this commit] for all the changes that you'll need in these two classes, as well as their integration tests.
+You'll need to make similar changes in `PostResource.java`. See https://github.com/mraible/jhipster8-demo/commit/773afc06e52c04947858e46fb3f318e5526e1f2f[this commit] for all the changes that you'll need in these two classes, as well as their integration tests.
 
 === Fix Cypress Tests
 
@@ -548,14 +520,25 @@ The changes you just made to limit data visibility will cause Cypress end-to-end
 const blogSample = { name: 'lunch optimistically', handle: 'unrealistic', user: { id: 2, login: username }}
 ----
 
+You'll also need to update the `should create an instance of Blog` test at the bottom. Right after the handle value assertion, select a user.
+
+```ts
+cy.get('[data-cy="user"]').select(username);
+```
+
 Then, change `post.cy.ts` to update the test that creates a new post. This change adds a new blog that the post can relate to.
 
 [source,diff]
 ----
+Index: src/test/javascript/cypress/e2e/entity/post.cy.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
 diff --git a/src/test/javascript/cypress/e2e/entity/post.cy.ts b/src/test/javascript/cypress/e2e/entity/post.cy.ts
-index 4e84fa2..5ee7579 100644
-
-@@ -35,9 +35,19 @@ describe('Post e2e test', () => {
+--- a/src/test/javascript/cypress/e2e/entity/post.cy.ts	(revision 773afc06e52c04947858e46fb3f318e5526e1f2f)
++++ b/src/test/javascript/cypress/e2e/entity/post.cy.ts	(date 1702538556467)
+@@ -35,7 +35,16 @@
          method: 'DELETE',
          url: `/api/posts/${post.id}`,
        }).then(() => {
@@ -572,11 +555,8 @@ index 4e84fa2..5ee7579 100644
 +        }
        });
      }
-+
    });
-
-   it('Posts menu should load Posts page', () => {
-@@ -76,6 +86,17 @@ describe('Post e2e test', () => {
+@@ -76,6 +85,17 @@
 
      describe('with existing value', () => {
        beforeEach(() => {
@@ -586,7 +566,7 @@ index 4e84fa2..5ee7579 100644
 +        cy.get('[data-cy="handle"]').type(username);
 +        cy.get('[data-cy="user"]').select(username);
 +        cy.get(entityCreateSaveButtonSelector).click();
-+        cy.get('.alert-success > pre').then(($value) => {
++        cy.get('.alert-success > pre').then($value => {
 +          const blogId = /\b(\w+)$/.exec($value.text())[1];
 +          postSample.blog = { id: blogId, user: { id: 2, login: username } };
 +        });
@@ -594,10 +574,10 @@ index 4e84fa2..5ee7579 100644
          cy.authenticatedRequest({
            method: 'POST',
            url: '/api/posts',
-@@ -169,6 +190,7 @@ describe('Post e2e test', () => {
-       cy.get(`[data-cy="date"]`).type('2023-11-26T18:51');
+@@ -169,6 +189,7 @@
+       cy.get(`[data-cy="date"]`).type('2023-12-13T09:56');
        cy.get(`[data-cy="date"]`).blur();
-       cy.get(`[data-cy="date"]`).should('have.value', '2023-11-26T18:51');
+       cy.get(`[data-cy="date"]`).should('have.value', '2023-12-13T09:56');
 +      cy.get('[data-cy="blog"]').select(1);
 
        cy.get(entityCreateSaveButtonSelector).click();
