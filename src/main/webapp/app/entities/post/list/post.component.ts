@@ -29,9 +29,9 @@ import { IPost } from '../post.model';
     SortDirective,
     SortByDirective,
     DurationPipe,
-    FormatMediumDatetimePipe,
     FormatMediumDatePipe,
     InfiniteScrollModule,
+    FormatMediumDatetimePipe,
   ],
 })
 export class PostComponent implements OnInit {

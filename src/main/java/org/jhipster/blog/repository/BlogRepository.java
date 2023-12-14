@@ -32,7 +32,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     @Query(value = "select blog from Blog blog left join fetch blog.user", countQuery = "select count(blog) from Blog blog")
     Page<Blog> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select blog from Blog blog left join fetch blog.user")
+    @Query("select blog from Blog blog left join fetch blog.user where blog.user.login = ?#{authentication.name}")
     List<Blog> findAllWithToOneRelationships();
 
     @Query("select blog from Blog blog left join fetch blog.user where blog.id =:id")

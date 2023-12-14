@@ -295,7 +295,7 @@ Using your IDE, create this method in the `PostRepository` class. It should look
 [source,java]
 .src/main/java/org/jhipster/blog/repository/PostRepository.java
 ----
-Page<Post> findByBlogUserLoginOrderByDateDesc(String currentUserLogin, Pageable pageable);
+Page<Post> findByBlogUserLoginOrderByDateDesc(String username, Pageable pageable);
 ----
 
 While you're in there, add a where clause to the `findAllWithToOneRelationships()` method to limit results by the current user.
@@ -315,75 +315,6 @@ image::static/posts-user.png[User's posts, 800, scaledwidth=100%]
 Run `npm run e2e` in a new terminal window to confirm everything works as expected.
 
 You might notice that this application doesn't look like a blog, and it doesn't allow HTML in the content field.
-
-=== Fix Cypress Tests
-
-The changes you just made to limit data visibility will cause Cypress end-to-end tests to fail. To fix them, you need to change from selecting the last user to selecting the `admin` user. Open `blog.cy.ts` and change the `blogSample` object to have a user assigned to it.
-
-[source,ts]
-.src/test/javascript/cypress/e2e/entity/blog.cy.ts
-----
-const blogSample = { name: 'lunch optimistically', handle: 'unrealistic', user: { id: 2, login: username }}
-----
-
-Then, change `post.cy.ts` to update the test that creates a new post. This change adds a new blog that the post can relate to.
-
-[source,diff]
-----
-diff --git a/src/test/javascript/cypress/e2e/entity/post.cy.ts b/src/test/javascript/cypress/e2e/entity/post.cy.ts
-index 4e84fa2..5ee7579 100644
-
-@@ -35,9 +35,19 @@ describe('Post e2e test', () => {
-         method: 'DELETE',
-         url: `/api/posts/${post.id}`,
-       }).then(() => {
--        post = undefined;
-+        if (post.blog.id) {
-+          cy.authenticatedRequest({
-+            method: 'DELETE',
-+            url: `/api/blogs/${post.blog.id}`,
-+          }).then(() => {
-+            post = undefined;
-+          });
-+        } else {
-+          post = undefined;
-+        }
-       });
-     }
-+
-   });
-
-   it('Posts menu should load Posts page', () => {
-@@ -76,6 +86,17 @@ describe('Post e2e test', () => {
-
-     describe('with existing value', () => {
-       beforeEach(() => {
-+        cy.visit('blog');
-+        cy.get(entityCreateButtonSelector).click();
-+        cy.get('[data-cy="name"]').type('User blog');
-+        cy.get('[data-cy="handle"]').type(username);
-+        cy.get('[data-cy="user"]').select(username);
-+        cy.get(entityCreateSaveButtonSelector).click();
-+        cy.get('.alert-success > pre').then(($value) => {
-+          const blogId = /\b(\w+)$/.exec($value.text())[1];
-+          postSample.blog = { id: blogId, user: { id: 2, login: username } };
-+        });
-+
-         cy.authenticatedRequest({
-           method: 'POST',
-           url: '/api/posts',
-@@ -169,6 +190,7 @@ describe('Post e2e test', () => {
-       cy.get(`[data-cy="date"]`).type('2023-11-26T18:51');
-       cy.get(`[data-cy="date"]`).blur();
-       cy.get(`[data-cy="date"]`).should('have.value', '2023-11-26T18:51');
-+      cy.get('[data-cy="blog"]').select(1);
-
-       cy.get(entityCreateSaveButtonSelector).click();
-
-
-----
-
-Run `npm run e2e` to confirm everything works as expected.
 
 == Make UI Enhancements
 
@@ -427,9 +358,7 @@ image::static/posts-with-html.png[Escaped HTML, 800, scaledwidth=100%]
 
 === Improve the layout
 
-To make the list of entries look like a blog, replace `<div class="table-responsive">` with HTML, so it uses a stacked layout in a single column.
-
-// todo: update to use @if syntax
+To make the list of entries look like a blog, replace the `@if (posts && posts.length)` block with the following code that uses a stacked layout in a single column.
 
 [source,html]
 .src/main/webapp/app/entities/post/list/post.component.html
@@ -462,6 +391,7 @@ To make the list of entries look like a blog, replace `<div class="table-respons
         </button>
       </div>
     </div>
+    }
   </div>
 </div>
 }
@@ -607,6 +537,73 @@ public ResponseEntity<Blog> deleteBlog(@PathVariable("id") Long id) {
 ----
 
 You'll need to make similar changes in `PostResource.java`. See https://github.com/mraible/jhipster8-demo/commit/tbd[this commit] for all the changes that you'll need in these two classes, as well as their integration tests.
+
+=== Fix Cypress Tests
+
+The changes you just made to limit data visibility will cause Cypress end-to-end tests to fail. To fix them, you need to change from selecting the last user to selecting the `admin` user. Open `blog.cy.ts` and change the `blogSample` object to have a user assigned to it.
+
+[source,ts]
+.src/test/javascript/cypress/e2e/entity/blog.cy.ts
+----
+const blogSample = { name: 'lunch optimistically', handle: 'unrealistic', user: { id: 2, login: username }}
+----
+
+Then, change `post.cy.ts` to update the test that creates a new post. This change adds a new blog that the post can relate to.
+
+[source,diff]
+----
+diff --git a/src/test/javascript/cypress/e2e/entity/post.cy.ts b/src/test/javascript/cypress/e2e/entity/post.cy.ts
+index 4e84fa2..5ee7579 100644
+
+@@ -35,9 +35,19 @@ describe('Post e2e test', () => {
+         method: 'DELETE',
+         url: `/api/posts/${post.id}`,
+       }).then(() => {
+-        post = undefined;
++        if (post.blog.id) {
++          cy.authenticatedRequest({
++            method: 'DELETE',
++            url: `/api/blogs/${post.blog.id}`,
++          }).then(() => {
++            post = undefined;
++          });
++        } else {
++          post = undefined;
++        }
+       });
+     }
++
+   });
+
+   it('Posts menu should load Posts page', () => {
+@@ -76,6 +86,17 @@ describe('Post e2e test', () => {
+
+     describe('with existing value', () => {
+       beforeEach(() => {
++        cy.visit('blog');
++        cy.get(entityCreateButtonSelector).click();
++        cy.get('[data-cy="name"]').type('User blog');
++        cy.get('[data-cy="handle"]').type(username);
++        cy.get('[data-cy="user"]').select(username);
++        cy.get(entityCreateSaveButtonSelector).click();
++        cy.get('.alert-success > pre').then(($value) => {
++          const blogId = /\b(\w+)$/.exec($value.text())[1];
++          postSample.blog = { id: blogId, user: { id: 2, login: username } };
++        });
++
+         cy.authenticatedRequest({
+           method: 'POST',
+           url: '/api/posts',
+@@ -169,6 +190,7 @@ describe('Post e2e test', () => {
+       cy.get(`[data-cy="date"]`).type('2023-11-26T18:51');
+       cy.get(`[data-cy="date"]`).blur();
+       cy.get(`[data-cy="date"]`).should('have.value', '2023-11-26T18:51');
++      cy.get('[data-cy="blog"]').select(1);
+
+       cy.get(entityCreateSaveButtonSelector).click();
+----
+
+Run `npm run e2e` to confirm everything works as expected.
 
 == Deploy to the Cloud
 
