@@ -962,7 +962,7 @@
             <!-- force dependency version as used bonsai add-on as of now only supports 7.10.x -->
             <!-- https://github.com/jhipster/generator-jhipster/issues/18650 -->
             <properties>
-                <bonsai.elasticsearch.version>7.17.16</bonsai.elasticsearch.version>
+                <bonsai.elasticsearch.version>7.17.17</bonsai.elasticsearch.version>
             </properties>
             <dependencyManagement>
                 <dependencies>
