@@ -48,7 +48,7 @@
         <liquibase-plugin.password/>
         <liquibase-plugin.url/>
         <liquibase-plugin.username/>
-        <liquibase.version>4.25.0</liquibase.version>
+        <liquibase.version>4.25.1</liquibase.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
