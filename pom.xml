@@ -73,7 +73,7 @@
         <profile.tls/>
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
-        <spotless-maven-plugin.version>2.41.1</spotless-maven-plugin.version>
+        <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <validation-api.version>3.0.2</validation-api.version>
     </properties>
 
