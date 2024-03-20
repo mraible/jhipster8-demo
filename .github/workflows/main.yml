@@ -21,11 +21,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-      - name: Install node.js packages
+      - name: Install Node.js packages
         run: npm install
       - name: Install Snyk CLI
         run: |
-          curl -Lo ./snyk $(curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url.*snyk-linux" | cut -d ':' -f 2,3 | tr -d \" | tr -d ' ')
+          curl --compressed https://static.snyk.io/cli/latest/snyk-linux -o snyk
           chmod +x snyk
       - name: Snyk test
         continue-on-error: true
