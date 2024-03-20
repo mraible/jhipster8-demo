@@ -21,8 +21,22 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-      - name: Install node.js packages
+      - name: Install Node.js packages
         run: npm install
+      - name: Install Snyk CLI
+        run: |
+          curl --compressed https://static.snyk.io/cli/latest/snyk-linux -o snyk
+          chmod +x snyk
+      - name: Snyk test
+        continue-on-error: true
+        run: ./snyk test --all-projects
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Snyk monitor
+        continue-on-error: true
+        run: ./snyk monitor --all-projects
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Run backend test
         run: |
           chmod +x mvnw
