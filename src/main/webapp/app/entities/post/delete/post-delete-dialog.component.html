@@ -1,5 +1,4 @@
-@if (post) {
-<form name="deleteForm" (ngSubmit)="confirmDelete(post.id!)">
+<form *ngIf="post" name="deleteForm" (ngSubmit)="confirmDelete(post.id!)">
   <div class="modal-header">
     <h4 class="modal-title" data-cy="postDeleteDialogHeading" jhiTranslate="entity.delete.title">Confirm delete operation</h4>
 
@@ -23,4 +22,3 @@
     </button>
   </div>
 </form>
-}

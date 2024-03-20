@@ -123,7 +123,7 @@ export class TagComponent implements OnInit {
   }
 
   protected fillComponentAttributesFromResponseBody(data: ITag[] | null): ITag[] {
-    // If there is previous link, data is a infinite scroll pagination content.
+    // If there is previus link, data is a infinite scroll pagination content.
     if ('prev' in this.links) {
       const tagsNew = this.tags ?? [];
       if (data) {

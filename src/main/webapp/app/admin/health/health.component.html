@@ -16,10 +16,8 @@
           <th scope="col" class="text-center" jhiTranslate="health.details.details">Details</th>
         </tr>
       </thead>
-      @if (health) {
-      <tbody>
-        @for (componentHealth of health.components | keyvalue; track componentHealth.key) {
-        <tr>
+      <tbody *ngIf="health">
+        <tr *ngFor="let componentHealth of health.components | keyvalue">
           <td>
             {{ 'health.indicator.' + componentHealth.key | translate }}
           </td>
@@ -35,16 +33,16 @@
             </span>
           </td>
           <td class="text-center">
-            @if (componentHealth.value!.details) {
-            <a class="hand" (click)="showHealth({ key: componentHealth.key, value: componentHealth.value! })">
+            <a
+              class="hand"
+              (click)="showHealth({ key: componentHealth.key, value: componentHealth.value! })"
+              *ngIf="componentHealth.value!.details"
+            >
               <fa-icon icon="eye"></fa-icon>
             </a>
-            }
           </td>
         </tr>
-        }
       </tbody>
-      }
     </table>
   </div>
 </div>

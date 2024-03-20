@@ -1,7 +1,6 @@
 <h3 id="datasourceMetrics" jhiTranslate="metrics.datasource.title">DataSource statistics (time in millisecond)</h3>
 
-@if (!updating && datasourceMetrics) {
-<div class="table-responsive">
+<div class="table-responsive" *ngIf="!updating && datasourceMetrics">
   <table class="table table-striped" aria-describedby="datasourceMetrics">
     <thead>
       <tr>
@@ -56,4 +55,3 @@
     </tbody>
   </table>
 </div>
-}

@@ -77,15 +77,15 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "buildTarget": "blog:build:development",
+            "browserTarget": "blog:build:development",
             "port": 4200
           },
           "configurations": {
             "production": {
-              "buildTarget": "blog:build:production"
+              "browserTarget": "blog:build:production"
             },
             "development": {
-              "buildTarget": "blog:build:development"
+              "browserTarget": "blog:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -1,7 +1,6 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    @if (user) {
-    <div>
+    <div *ngIf="user">
       <h2>
         <span jhiTranslate="userManagement.detail.title">User</span> [<strong>{{ user.login }}</strong
         >]
@@ -11,11 +10,8 @@
         <dt><span jhiTranslate="userManagement.login">Login</span></dt>
         <dd>
           <span>{{ user.login }}</span>
-          @if (user.activated) {
-          <span class="badge bg-success" jhiTranslate="userManagement.activated">Activated</span>
-          } @else {
-          <span class="badge bg-danger" jhiTranslate="userManagement.deactivated">Deactivated</span>
-          }
+          <span *ngIf="user.activated" class="badge bg-success" jhiTranslate="userManagement.activated">Activated</span>
+          <span *ngIf="!user.activated" class="badge bg-danger" jhiTranslate="userManagement.deactivated">Deactivated</span>
         </dd>
 
         <dt><span jhiTranslate="userManagement.firstName">First name</span></dt>
@@ -45,11 +41,9 @@
         <dt><span jhiTranslate="userManagement.profiles">Profiles</span></dt>
         <dd>
           <ul class="list-unstyled">
-            @for (authority of user.authorities; track $index) {
-            <li>
+            <li *ngFor="let authority of user.authorities">
               <span class="badge bg-info">{{ authority }}</span>
             </li>
-            }
           </ul>
         </dd>
       </dl>
@@ -58,6 +52,5 @@
         <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
       </button>
     </div>
-    }
   </div>
 </div>

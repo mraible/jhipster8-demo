@@ -9,7 +9,7 @@
     <!--
         Added the entity Post.
     -->
-    <changeSet id="20231214033914-1" author="jhipster">
+    <changeSet id="20240320163026-1" author="jhipster">
         <createTable tableName="post">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
@@ -31,7 +31,7 @@
         <dropDefaultValue tableName="post" columnName="date" columnDataType="${datetimeType}"/>
     </changeSet>
 
-    <changeSet id="20231214033914-1-relations" author="jhipster">
+    <changeSet id="20240320163026-1-relations" author="jhipster">
 
         <createTable tableName="rel_post__tag">
             <column name="tag_id" type="bigint">
@@ -55,7 +55,7 @@
           This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
           Spring Boot configuration key.
     -->
-    <changeSet id="20231214033914-1-data" author="jhipster" context="faker">
+    <changeSet id="20240320163026-1-data" author="jhipster" context="faker">
         <loadData
                   file="config/liquibase/fake-data/post.csv"
                   separator=";"

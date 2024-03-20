@@ -24,7 +24,7 @@ public class PostgreSqlTestContainer implements SqlTestContainer {
     public void afterPropertiesSet() {
         if (null == postgreSQLContainer) {
             postgreSQLContainer =
-                new PostgreSQLContainer<>("postgres:16.1")
+                new PostgreSQLContainer<>("postgres:16.0")
                     .withDatabaseName("blog")
                     .withTmpFs(Collections.singletonMap("/testtmpfs", "rw"))
                     .withLogConsumer(new Slf4jLogConsumer(log))

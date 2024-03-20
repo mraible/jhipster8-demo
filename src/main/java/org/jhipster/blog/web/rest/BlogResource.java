@@ -147,7 +147,7 @@ public class BlogResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of blogs in body.
      */
     @GetMapping("")
-    public List<Blog> getAllBlogs(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
+    public List<Blog> getAllBlogs(@RequestParam(required = false, defaultValue = "true") boolean eagerload) {
         log.debug("REST request to get all Blogs");
         if (eagerload) {
             return blogRepository.findAllWithEagerRelationships();
@@ -163,7 +163,7 @@ public class BlogResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the blog, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Blog> getBlog(@PathVariable("id") Long id) {
+    public ResponseEntity<Blog> getBlog(@PathVariable Long id) {
         log.debug("REST request to get Blog : {}", id);
         Optional<Blog> blog = blogRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(blog);
@@ -176,7 +176,7 @@ public class BlogResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBlog(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteBlog(@PathVariable Long id) {
         log.debug("REST request to delete Blog : {}", id);
         blogRepository.deleteById(id);
         return ResponseEntity

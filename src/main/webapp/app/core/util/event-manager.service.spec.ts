@@ -14,13 +14,13 @@ describe('Event Manager tests', () => {
   });
 
   describe('EventManager', () => {
-    let receivedEvent: EventWithContent<unknown> | string | null;
+    let recievedEvent: EventWithContent<unknown> | string | null;
 
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [EventManager],
       });
-      receivedEvent = null;
+      recievedEvent = null;
     });
 
     it('should not fail when nosubscriber and broadcasting', inject([EventManager], (eventManager: EventManager) => {
@@ -32,53 +32,53 @@ describe('Event Manager tests', () => {
       [EventManager],
       (eventManager: EventManager) => {
         // GIVEN
-        eventManager.subscribe('modifier', (event: EventWithContent<unknown> | string) => (receivedEvent = event));
+        eventManager.subscribe('modifier', (event: EventWithContent<unknown> | string) => (recievedEvent = event));
 
         // WHEN
         eventManager.broadcast({ name: 'unrelatedModifier', content: 'unrelated modification' });
         // THEN
-        expect(receivedEvent).toBeNull();
+        expect(recievedEvent).toBeNull();
 
         // WHEN
         eventManager.broadcast({ name: 'modifier', content: 'modified something' });
         // THEN
-        expect(receivedEvent).toEqual({ name: 'modifier', content: 'modified something' });
+        expect(recievedEvent).toEqual({ name: 'modifier', content: 'modified something' });
       },
     ));
 
     it('should create an observable and callback when broadcasted string', inject([EventManager], (eventManager: EventManager) => {
       // GIVEN
-      eventManager.subscribe('modifier', (event: EventWithContent<unknown> | string) => (receivedEvent = event));
+      eventManager.subscribe('modifier', (event: EventWithContent<unknown> | string) => (recievedEvent = event));
 
       // WHEN
       eventManager.broadcast('unrelatedModifier');
       // THEN
-      expect(receivedEvent).toBeNull();
+      expect(recievedEvent).toBeNull();
 
       // WHEN
       eventManager.broadcast('modifier');
       // THEN
-      expect(receivedEvent).toEqual('modifier');
+      expect(recievedEvent).toEqual('modifier');
     }));
 
     it('should subscribe to multiple events', inject([EventManager], (eventManager: EventManager) => {
       // GIVEN
-      eventManager.subscribe(['modifier', 'modifier2'], (event: EventWithContent<unknown> | string) => (receivedEvent = event));
+      eventManager.subscribe(['modifier', 'modifier2'], (event: EventWithContent<unknown> | string) => (recievedEvent = event));
 
       // WHEN
       eventManager.broadcast('unrelatedModifier');
       // THEN
-      expect(receivedEvent).toBeNull();
+      expect(recievedEvent).toBeNull();
 
       // WHEN
       eventManager.broadcast({ name: 'modifier', content: 'modified something' });
       // THEN
-      expect(receivedEvent).toEqual({ name: 'modifier', content: 'modified something' });
+      expect(recievedEvent).toEqual({ name: 'modifier', content: 'modified something' });
 
       // WHEN
       eventManager.broadcast('modifier2');
       // THEN
-      expect(receivedEvent).toEqual('modifier2');
+      expect(recievedEvent).toEqual('modifier2');
     }));
   });
 });

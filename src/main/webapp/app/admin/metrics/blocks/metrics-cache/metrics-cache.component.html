@@ -1,7 +1,6 @@
 <h3 id="cacheMetrics" jhiTranslate="metrics.cache.title">Cache statistics</h3>
 
-@if (!updating && cacheMetrics) {
-<div class="table-responsive">
+<div class="table-responsive" *ngIf="!updating && cacheMetrics">
   <table class="table table-striped" aria-describedby="cacheMetrics">
     <thead>
       <tr>
@@ -17,8 +16,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (entry of cacheMetrics | keyvalue; track entry.key) {
-      <tr>
+      <tr *ngFor="let entry of cacheMetrics | keyvalue">
         <td>{{ entry.key }}</td>
         <td class="text-end">{{ entry.value['cache.gets.hit'] }}</td>
         <td class="text-end">{{ entry.value['cache.gets.miss'] }}</td>
@@ -39,8 +37,6 @@
           }}
         </td>
       </tr>
-      }
     </tbody>
   </table>
 </div>
-}

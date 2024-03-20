@@ -1,5 +1,4 @@
-@if (allBeans) {
-<div>
+<div *ngIf="allBeans">
   <h2 id="configuration-page-heading" jhiTranslate="configuration.title" data-cy="configurationPageHeading">Configuration</h2>
 
   <span jhiTranslate="configuration.filter">Filter (by prefix)</span>
@@ -17,28 +16,23 @@
       </tr>
     </thead>
     <tbody>
-      @for (bean of beans; track $index) {
-      <tr>
+      <tr *ngFor="let bean of beans">
         <td>
           <span>{{ bean.prefix }}</span>
         </td>
         <td>
-          @for (property of bean.properties | keyvalue; track property.key) {
-          <div class="row">
+          <div class="row" *ngFor="let property of bean.properties | keyvalue">
             <div class="col-md-4">{{ property.key }}</div>
             <div class="col-md-8">
               <span class="float-end bg-secondary break">{{ property.value | json }}</span>
             </div>
           </div>
-          }
         </td>
       </tr>
-      }
     </tbody>
   </table>
 
-  @for (propertySource of propertySources; track i; let i = $index) {
-  <div>
+  <div *ngFor="let propertySource of propertySources; let i = index">
     <h4 [id]="'property-source-' + i">
       <span>{{ propertySource.name }}</span>
     </h4>
@@ -51,17 +45,13 @@
         </tr>
       </thead>
       <tbody>
-        @for (property of propertySource.properties | keyvalue; track property.key) {
-        <tr>
+        <tr *ngFor="let property of propertySource.properties | keyvalue">
           <td class="break">{{ property.key }}</td>
           <td class="break">
             <span class="float-end bg-secondary break">{{ property.value.value }}</span>
           </td>
         </tr>
-        }
       </tbody>
     </table>
   </div>
-  }
 </div>
-}

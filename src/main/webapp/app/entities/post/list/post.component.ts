@@ -133,7 +133,7 @@ export class PostComponent implements OnInit {
   }
 
   protected fillComponentAttributesFromResponseBody(data: IPost[] | null): IPost[] {
-    // If there is previous link, data is a infinite scroll pagination content.
+    // If there is previus link, data is a infinite scroll pagination content.
     if ('prev' in this.links) {
       const postsNew = this.posts ?? [];
       if (data) {

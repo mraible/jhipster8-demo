@@ -7,8 +7,8 @@ export interface IPost {
   title?: string | null;
   content?: string | null;
   date?: dayjs.Dayjs | null;
-  blog?: IBlog | null;
-  tags?: ITag[] | null;
+  blog?: Pick<IBlog, 'id' | 'name'> | null;
+  tags?: Pick<ITag, 'id' | 'name'>[] | null;
 }
 
 export type NewPost = Omit<IPost, 'id'> & { id: null };

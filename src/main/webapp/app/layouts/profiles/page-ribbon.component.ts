@@ -9,13 +9,11 @@ import { ProfileService } from './profile.service';
   standalone: true,
   selector: 'jhi-page-ribbon',
   template: `
-    @if (ribbonEnv$ | async; as ribbonEnv) {
-    <div class="ribbon">
+    <div class="ribbon" *ngIf="ribbonEnv$ | async as ribbonEnv">
       <a href="" jhiTranslate="global.ribbon.{{ ribbonEnv }}">{{ { dev: 'Development' }[ribbonEnv] || '' }}</a>
     </div>
-    }
   `,
-  styleUrl: './page-ribbon.component.scss',
+  styleUrls: ['./page-ribbon.component.scss'],
   imports: [SharedModule],
 })
 export default class PageRibbonComponent implements OnInit {

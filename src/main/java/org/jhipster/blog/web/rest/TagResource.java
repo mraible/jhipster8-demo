@@ -161,7 +161,7 @@ public class TagResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the tag, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> getTag(@PathVariable("id") Long id) {
+    public ResponseEntity<Tag> getTag(@PathVariable Long id) {
         log.debug("REST request to get Tag : {}", id);
         Optional<Tag> tag = tagRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(tag);
@@ -174,7 +174,7 @@ public class TagResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTag(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
         log.debug("REST request to delete Tag : {}", id);
         tagRepository.deleteById(id);
         return ResponseEntity

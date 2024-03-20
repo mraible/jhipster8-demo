@@ -24,26 +24,23 @@
 
   <jhi-alert></jhi-alert>
 
-  @if (tags?.length === 0) {
-  <div class="alert alert-warning" id="no-result">
+  <div class="alert alert-warning" id="no-result" *ngIf="tags?.length === 0">
     <span jhiTranslate="blogApp.tag.home.notFound">No Tags found</span>
   </div>
-  } @if (tags && tags.length > 0) {
-  <div class="table-responsive table-entities" id="entities">
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="tags && tags.length > 0">
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="id">
             <div class="d-flex">
               <span jhiTranslate="global.field.id">ID</span>
-
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
           <th scope="col" jhiSortBy="name">
             <div class="d-flex">
               <span jhiTranslate="blogApp.tag.name">Name</span>
-
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
@@ -56,8 +53,7 @@
         [infiniteScrollDisabled]="page - 1 >= links['last']"
         [infiniteScrollDistance]="0"
       >
-        @for (tag of tags; track trackId) {
-        <tr data-cy="entityTable">
+        <tr *ngFor="let tag of tags; trackBy: trackId" data-cy="entityTable">
           <td>
             <a [routerLink]="['/tag', tag.id, 'view']">{{ tag.id }}</a>
           </td>
@@ -81,9 +77,7 @@
             </div>
           </td>
         </tr>
-        }
       </tbody>
     </table>
   </div>
-  }
 </div>

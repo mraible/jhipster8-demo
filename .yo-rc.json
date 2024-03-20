@@ -3,6 +3,12 @@
     "applicationType": "monolith",
     "authenticationType": "jwt",
     "baseName": "blog",
+    "blueprints": [
+      {
+        "name": "generator-jhipster-migrate",
+        "version": "0.0.4"
+      }
+    ],
     "buildTool": "maven",
     "cacheProvider": "ehcache",
     "clientFramework": "angular",
@@ -24,10 +30,10 @@
     "herokuAppName": "jhipster8-demo",
     "herokuDeployType": "git",
     "herokuJavaVersion": "21",
-    "jhipsterVersion": "8.1.0",
+    "jhipsterVersion": "8.0.0",
     "jwtSecretKey": "YjFjNDdlM2FhMzBlYmMwZTJjNjAxNjg2OWZhOTY1M2Y1YTdlYzk3ZjFiYTBkMmUwODEyMGJiMjYxMGU5Zjg4MDM5ZDhiODkxNjc2NDc0NDMwMzU4NGIxMDBlMGM1MWEyNjAwM2ZjYTRjNmE2ZjM1OTZkN2I5NTU3Yzk0MjU2MTk=",
     "languages": ["en", "es"],
-    "lastLiquibaseTimestamp": 1702525214000,
+    "lastLiquibaseTimestamp": 1710952227000,
     "messageBroker": false,
     "microfrontend": null,
     "microfrontends": [],

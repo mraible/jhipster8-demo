@@ -17,8 +17,7 @@
 
   <jhi-alert></jhi-alert>
 
-  @if (users) {
-  <div class="table-responsive">
+  <div class="table-responsive" *ngIf="users">
     <table class="table table-striped" aria-describedby="user-management-page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="transition()">
@@ -42,38 +41,37 @@
           <th scope="col"></th>
         </tr>
       </thead>
-      @if (users) {
-      <tbody>
-        @for (user of users; track trackIdentity) {
-        <tr>
+      <tbody *ngIf="users">
+        <tr *ngFor="let user of users; trackBy: trackIdentity">
           <td>
             <a [routerLink]="['./', user.login, 'view']">{{ user.id }}</a>
           </td>
           <td>{{ user.login }}</td>
           <td>{{ user.email }}</td>
           <td>
-            @if (!user.activated) {
-            <button class="btn btn-danger btn-sm" (click)="setActive(user, true)" jhiTranslate="userManagement.deactivated">
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="setActive(user, true)"
+              *ngIf="!user.activated"
+              jhiTranslate="userManagement.deactivated"
+            >
               Deactivated
             </button>
-            } @else {
             <button
               class="btn btn-success btn-sm"
               (click)="setActive(user, false)"
+              *ngIf="user.activated"
               [disabled]="!currentAccount || currentAccount.login === user.login"
               jhiTranslate="userManagement.activated"
             >
               Activated
             </button>
-            }
           </td>
           <td>{{ user.langKey }}</td>
           <td>
-            @for (authority of user.authorities; track $index) {
-            <div>
+            <div *ngFor="let authority of user.authorities">
               <span class="badge bg-info">{{ authority }}</span>
             </div>
-            }
           </td>
           <td>{{ user.createdDate | date: 'dd/MM/yy HH:mm' }}</td>
           <td>{{ user.lastModifiedBy }}</td>
@@ -102,13 +100,11 @@
             </div>
           </td>
         </tr>
-        }
       </tbody>
-      }
     </table>
   </div>
-  } @if (users) {
-  <div>
+
+  <div *ngIf="users">
     <div class="d-flex justify-content-center">
       <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     </div>
@@ -125,5 +121,4 @@
       ></ngb-pagination>
     </div>
   </div>
-  }
 </div>

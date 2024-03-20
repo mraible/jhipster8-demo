@@ -24,40 +24,35 @@
 
   <jhi-alert></jhi-alert>
 
-  @if (posts?.length === 0) {
-  <div class="alert alert-warning" id="no-result">
+  <div class="alert alert-warning" id="no-result" *ngIf="posts?.length === 0">
     <span jhiTranslate="blogApp.post.home.notFound">No Posts found</span>
   </div>
-  } @if (posts && posts.length > 0) {
-  <div class="table-responsive table-entities" id="entities">
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="posts && posts.length > 0">
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
           <th scope="col" jhiSortBy="id">
             <div class="d-flex">
               <span jhiTranslate="global.field.id">ID</span>
-
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
           <th scope="col" jhiSortBy="title">
             <div class="d-flex">
               <span jhiTranslate="blogApp.post.title">Title</span>
-
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
           <th scope="col" jhiSortBy="content">
             <div class="d-flex">
               <span jhiTranslate="blogApp.post.content">Content</span>
-
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
           <th scope="col" jhiSortBy="date">
             <div class="d-flex">
               <span jhiTranslate="blogApp.post.date">Date</span>
-
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
@@ -76,8 +71,7 @@
         [infiniteScrollDisabled]="page - 1 >= links['last']"
         [infiniteScrollDistance]="0"
       >
-        @for (post of posts; track trackId) {
-        <tr data-cy="entityTable">
+        <tr *ngFor="let post of posts; trackBy: trackId" data-cy="entityTable">
           <td>
             <a [routerLink]="['/post', post.id, 'view']">{{ post.id }}</a>
           </td>
@@ -85,11 +79,9 @@
           <td>{{ post.content }}</td>
           <td>{{ post.date | formatMediumDatetime }}</td>
           <td>
-            @if (post.blog) {
-            <div>
+            <div *ngIf="post.blog">
               <a [routerLink]="['/blog', post.blog.id, 'view']">{{ post.blog.name }}</a>
             </div>
-            }
           </td>
           <td class="text-end">
             <div class="btn-group">
@@ -110,9 +102,7 @@
             </div>
           </td>
         </tr>
-        }
       </tbody>
     </table>
   </div>
-  }
 </div>

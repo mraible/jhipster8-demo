@@ -12,11 +12,7 @@ import SortDirective from './sort.directive';
     <table>
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="transition($event)">
-          <th jhiSortBy="name">
-            ID @if (sortAllowed) {
-            <fa-icon [icon]="'sort'"></fa-icon>
-            }
-          </th>
+          <th jhiSortBy="name">ID<fa-icon *ngIf="sortAllowed" [icon]="'sort'"></fa-icon></th>
         </tr>
       </thead>
     </table>
@@ -41,8 +37,8 @@ describe('Directive: SortByDirective', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SortDirective, SortByDirective, FaIconComponent],
-      declarations: [TestSortByDirectiveComponent],
+      imports: [SortDirective, SortByDirective],
+      declarations: [TestSortByDirectiveComponent, FaIconComponent],
     });
     fixture = TestBed.createComponent(TestSortByDirectiveComponent);
     component = fixture.componentInstance;
