@@ -25,46 +25,39 @@
   <jhi-alert></jhi-alert>
 
   @if (posts?.length === 0) {
-    <div class="alert alert-warning" id="no-result">
-      <span jhiTranslate="blogApp.post.home.notFound">No Posts found</span>
-    </div>
-  }
-
-  @if (posts && posts.length) {
-    <div class="table-responsive table-entities" id="entities">
-      <div
-        infinite-scroll
-        (scrolled)="loadPage(page + 1)"
-        [infiniteScrollDisabled]="page - 1 >= links['last']"
-        [infiniteScrollDistance]="0"
-      >
-        @for (post of posts; track trackId) {
-          <div data-cy="entityTable">
-            <a [routerLink]="['/post', post.id, 'view']" data-cy="entityDetailsButton">
-              <h2>{{ post.title }}</h2>
-            </a>
-            <small
-              >Posted on {{ post.date | formatMediumDatetime }}
-              @if (post.blog) {
-                <span
-                  >in <a [routerLink]="['/blog', post.blog.id, 'view']">{{ post.blog.name }}</a></span
-                >
-              }
-            </small>
-            <div [innerHTML]="post.content"></div>
-            <div class="btn-group mb-2 mt-1">
-              <button type="submit" [routerLink]="['/post', post.id, 'edit']" class="btn btn-primary btn-sm">
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit" data-cy="entityEditButton">Edit</span>
-              </button>
-              <button type="submit" (click)="delete(post)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-              </button>
-            </div>
-          </div>
-        }
+  <div class="alert alert-warning" id="no-result">
+    <span jhiTranslate="blogApp.post.home.notFound">No Posts found</span>
+  </div>
+  } @if (posts && posts.length) {
+  <div class="table-responsive table-entities" id="entities">
+    <div infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page - 1 >= links['last']" [infiniteScrollDistance]="0">
+      @for (post of posts; track trackId) {
+      <div data-cy="entityTable">
+        <a [routerLink]="['/post', post.id, 'view']" data-cy="entityDetailsButton">
+          <h2>{{ post.title }}</h2>
+        </a>
+        <small
+          >Posted on {{ post.date | formatMediumDatetime }}
+          @if (post.blog) {
+          <span
+            >in <a [routerLink]="['/blog', post.blog.id, 'view']">{{ post.blog.name }}</a></span
+          >
+          }
+        </small>
+        <div [innerHTML]="post.content"></div>
+        <div class="btn-group mb-2 mt-1">
+          <button type="submit" [routerLink]="['/post', post.id, 'edit']" class="btn btn-primary btn-sm">
+            <fa-icon icon="pencil-alt"></fa-icon>
+            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit" data-cy="entityEditButton">Edit</span>
+          </button>
+          <button type="submit" (click)="delete(post)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+            <fa-icon icon="times"></fa-icon>
+            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+          </button>
+        </div>
       </div>
+      }
     </div>
+  </div>
   }
 </div>

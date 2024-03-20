@@ -13,9 +13,8 @@ import SortDirective from './sort.directive';
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="transition($event)">
           <th jhiSortBy="name">
-            ID
-            @if (sortAllowed) {
-              <fa-icon [icon]="'sort'"></fa-icon>
+            ID @if (sortAllowed) {
+            <fa-icon [icon]="'sort'"></fa-icon>
             }
           </th>
         </tr>
