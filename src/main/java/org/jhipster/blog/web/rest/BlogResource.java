@@ -59,11 +59,11 @@ public class BlogResource {
         if (!blog.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        Blog result = blogRepository.save(blog);
+        blog = blogRepository.save(blog);
         return ResponseEntity
             .created(new URI("/api/blogs/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+            .body(blog);
     }
 
     /**
@@ -93,11 +93,11 @@ public class BlogResource {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        Blog result = blogRepository.save(blog);
+        blog = blogRepository.save(blog);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, blog.getId().toString()))
-            .body(result);
+            .body(blog);
     }
 
     /**
@@ -198,8 +198,7 @@ public class BlogResource {
             .filter(b -> b.getUser() != null && b.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse("")))
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
         blogRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

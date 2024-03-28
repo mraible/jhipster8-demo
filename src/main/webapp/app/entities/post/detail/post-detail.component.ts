@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Component, inject, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
 import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
@@ -15,10 +15,7 @@ import { IPost } from '../post.model';
 export class PostDetailComponent {
   @Input() post: IPost | null = null;
 
-  constructor(
-    protected dataUtils: DataUtils,
-    protected activatedRoute: ActivatedRoute,
-  ) {}
+  protected dataUtils = inject(DataUtils);
 
   byteSize(base64String: string): string {
     return this.dataUtils.byteSize(base64String);

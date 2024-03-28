@@ -2,10 +2,13 @@ package org.jhipster.blog.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.jhipster.blog.domain.PostAsserts.*;
+import static org.jhipster.blog.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -59,6 +62,9 @@ class PostResourceIT {
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private PostRepository postRepository;
@@ -123,19 +129,21 @@ class PostResourceIT {
     @Test
     @Transactional
     void createPost() throws Exception {
-        int databaseSizeBeforeCreate = postRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Post
-        restPostMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(post)))
-            .andExpect(status().isCreated());
+        var returnedPost = om.readValue(
+            restPostMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(post)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Post.class
+        );
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeCreate + 1);
-        Post testPost = postList.get(postList.size() - 1);
-        assertThat(testPost.getTitle()).isEqualTo(DEFAULT_TITLE);
-        assertThat(testPost.getContent()).isEqualTo(DEFAULT_CONTENT);
-        assertThat(testPost.getDate()).isEqualTo(DEFAULT_DATE);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertPostUpdatableFieldsEquals(returnedPost, getPersistedPost(returnedPost));
     }
 
     @Test
@@ -144,50 +152,47 @@ class PostResourceIT {
         // Create the Post with an existing ID
         post.setId(1L);
 
-        int databaseSizeBeforeCreate = postRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPostMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(post)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(post)))
             .andExpect(status().isBadRequest());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
     }
 
     @Test
     @Transactional
     void checkTitleIsRequired() throws Exception {
-        int databaseSizeBeforeTest = postRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
         post.setTitle(null);
 
         // Create the Post, which fails.
 
         restPostMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(post)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(post)))
             .andExpect(status().isBadRequest());
 
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
     }
 
     @Test
     @Transactional
     void checkDateIsRequired() throws Exception {
-        int databaseSizeBeforeTest = postRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
         post.setDate(null);
 
         // Create the Post, which fails.
 
         restPostMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(post)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(post)))
             .andExpect(status().isBadRequest());
 
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
     }
 
     @Test
@@ -254,7 +259,7 @@ class PostResourceIT {
         // Initialize the database
         postRepository.saveAndFlush(post);
 
-        int databaseSizeBeforeUpdate = postRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the post
         Post updatedPost = postRepository.findById(post.getId()).orElseThrow();
@@ -266,43 +271,34 @@ class PostResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, updatedPost.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedPost))
+                    .content(om.writeValueAsBytes(updatedPost))
             )
             .andExpect(status().isOk());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeUpdate);
-        Post testPost = postList.get(postList.size() - 1);
-        assertThat(testPost.getTitle()).isEqualTo(UPDATED_TITLE);
-        assertThat(testPost.getContent()).isEqualTo(UPDATED_CONTENT);
-        assertThat(testPost.getDate()).isEqualTo(UPDATED_DATE);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedPostToMatchAllProperties(updatedPost);
     }
 
     @Test
     @Transactional
     void putNonExistingPost() throws Exception {
-        int databaseSizeBeforeUpdate = postRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         post.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPostMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, post.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(post))
-            )
+            .perform(put(ENTITY_API_URL_ID, post.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(post)))
             .andExpect(status().isBadRequest());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchPost() throws Exception {
-        int databaseSizeBeforeUpdate = postRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         post.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -310,29 +306,27 @@ class PostResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(post))
+                    .content(om.writeValueAsBytes(post))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamPost() throws Exception {
-        int databaseSizeBeforeUpdate = postRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         post.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPostMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(post)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(post)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -341,29 +335,25 @@ class PostResourceIT {
         // Initialize the database
         postRepository.saveAndFlush(post);
 
-        int databaseSizeBeforeUpdate = postRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the post using partial update
         Post partialUpdatedPost = new Post();
         partialUpdatedPost.setId(post.getId());
 
-        partialUpdatedPost.title(UPDATED_TITLE).date(UPDATED_DATE);
+        partialUpdatedPost.content(UPDATED_CONTENT);
 
         restPostMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedPost.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedPost))
+                    .content(om.writeValueAsBytes(partialUpdatedPost))
             )
             .andExpect(status().isOk());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeUpdate);
-        Post testPost = postList.get(postList.size() - 1);
-        assertThat(testPost.getTitle()).isEqualTo(UPDATED_TITLE);
-        assertThat(testPost.getContent()).isEqualTo(DEFAULT_CONTENT);
-        assertThat(testPost.getDate()).isEqualTo(UPDATED_DATE);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPostUpdatableFieldsEquals(createUpdateProxyForBean(partialUpdatedPost, post), getPersistedPost(post));
     }
 
     @Test
@@ -372,7 +362,7 @@ class PostResourceIT {
         // Initialize the database
         postRepository.saveAndFlush(post);
 
-        int databaseSizeBeforeUpdate = postRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the post using partial update
         Post partialUpdatedPost = new Post();
@@ -384,43 +374,34 @@ class PostResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedPost.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedPost))
+                    .content(om.writeValueAsBytes(partialUpdatedPost))
             )
             .andExpect(status().isOk());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeUpdate);
-        Post testPost = postList.get(postList.size() - 1);
-        assertThat(testPost.getTitle()).isEqualTo(UPDATED_TITLE);
-        assertThat(testPost.getContent()).isEqualTo(UPDATED_CONTENT);
-        assertThat(testPost.getDate()).isEqualTo(UPDATED_DATE);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPostUpdatableFieldsEquals(partialUpdatedPost, getPersistedPost(partialUpdatedPost));
     }
 
     @Test
     @Transactional
     void patchNonExistingPost() throws Exception {
-        int databaseSizeBeforeUpdate = postRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         post.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPostMockMvc
-            .perform(
-                patch(ENTITY_API_URL_ID, post.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(post))
-            )
+            .perform(patch(ENTITY_API_URL_ID, post.getId()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(post)))
             .andExpect(status().isBadRequest());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchPost() throws Exception {
-        int databaseSizeBeforeUpdate = postRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         post.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -428,29 +409,27 @@ class PostResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(post))
+                    .content(om.writeValueAsBytes(post))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamPost() throws Exception {
-        int databaseSizeBeforeUpdate = postRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         post.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPostMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(post)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(post)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Post in the database
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -459,7 +438,7 @@ class PostResourceIT {
         // Initialize the database
         postRepository.saveAndFlush(post);
 
-        int databaseSizeBeforeDelete = postRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
 
         // Delete the post
         restPostMockMvc
@@ -467,7 +446,34 @@ class PostResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+    }
+
+    protected long getRepositoryCount() {
+        return postRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Post getPersistedPost(Post post) {
+        return postRepository.findById(post.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedPostToMatchAllProperties(Post expectedPost) {
+        assertPostAllPropertiesEquals(expectedPost, getPersistedPost(expectedPost));
+    }
+
+    protected void assertPersistedPostToMatchUpdatableProperties(Post expectedPost) {
+        assertPostAllUpdatablePropertiesEquals(expectedPost, getPersistedPost(expectedPost));
     }
 }

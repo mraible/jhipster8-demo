@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
-import { map } from 'rxjs/operators';
+import { map, Observable } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
 
@@ -28,12 +26,10 @@ export type EntityArrayResponseType = HttpResponse<IPost[]>;
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/posts');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/posts');
 
   create(post: NewPost): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(post);
@@ -85,7 +81,7 @@ export class PostService {
   ): Type[] {
     const posts: Type[] = postsToCheck.filter(isPresent);
     if (posts.length > 0) {
-      const postCollectionIdentifiers = postCollection.map(postItem => this.getPostIdentifier(postItem)!);
+      const postCollectionIdentifiers = postCollection.map(postItem => this.getPostIdentifier(postItem));
       const postsToAdd = posts.filter(postItem => {
         const postIdentifier = this.getPostIdentifier(postItem);
         if (postCollectionIdentifiers.includes(postIdentifier)) {

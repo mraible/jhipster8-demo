@@ -7,10 +7,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
 import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { UserService } from 'app/entities/user/service/user.service';
 import { BlogService } from '../service/blog.service';
 import { IBlog } from '../blog.model';
-
 import { BlogFormService } from './blog-form.service';
 
 import { BlogUpdateComponent } from './blog-update.component';

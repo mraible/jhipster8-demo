@@ -7,7 +7,7 @@ import { mergeMap } from 'rxjs/operators';
 import { ITag } from '../tag.model';
 import { TagService } from '../service/tag.service';
 
-export const tagResolve = (route: ActivatedRouteSnapshot): Observable<null | ITag> => {
+const tagResolve = (route: ActivatedRouteSnapshot): Observable<null | ITag> => {
   const id = route.params['id'];
   if (id) {
     return inject(TagService)
