@@ -743,6 +743,6 @@ Follow https://twitter.com/jhipster[@jhipster] on Twitter for release announceme
 
 == About the Author
 
-**Matt Raible** is a web developer, Java Champion, and Developer Advocate Architect at https://developer.auth0.com[Okta]. Matt is a frequent contributor to open source and a big fan of Java, GraalVM, IntelliJ, TypeScript, Angular, and Spring Boot. When he's not slinging code with open source frameworks, he likes to ski and raft with his family, drive his classic VWs, and enjoy craft beer.
+**Matt Raible** is a web developer and Java Champion. Matt is a frequent contributor to open source and a big fan of Java, GraalVM, IntelliJ, TypeScript, Angular, and Spring Boot. When he's not slinging code with open source frameworks, he likes to ski and raft with his family, drive his classic VWs, and enjoy craft beer.
 
-Matt writes on the https://auth0.com/blog/authors/matt-raible/[Auth0 blog], for https://www.infoq.com/profile/Matt-Raible/[InfoQ], and on his https://raibledesigns.com/[personal blog]. You can find him on Twitter https://twitter.com/mraible[@mraible] and LinkedIn https://linkedin.com/in/mraible[@in/mraible].
+Matt writes on his https://raibledesigns.com/[personal blog]. You can also find him on Twitter https://twitter.com/mraible[@mraible] and LinkedIn https://linkedin.com/in/mraible[@in/mraible].
