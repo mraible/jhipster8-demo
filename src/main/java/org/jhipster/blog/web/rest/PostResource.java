@@ -68,10 +68,10 @@ public class PostResource {
         ) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
+
         post = postRepository.save(post);
-        return ResponseEntity
-            .created(new URI("/api/posts/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+        return ResponseEntity.created(new URI("/api/posts/" + post.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, post.getId().toString()))
             .body(post);
     }
 
@@ -200,10 +200,11 @@ public class PostResource {
         Optional<Post> post = postRepository.findOneWithEagerRelationships(id);
         if (post.isPresent()) {
             post
-                .filter(p ->
-                    p.getBlog() != null &&
-                    p.getBlog().getUser() != null &&
-                    p.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+                .filter(
+                    p ->
+                        p.getBlog() != null &&
+                        p.getBlog().getUser() != null &&
+                        p.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
                 )
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
         }
