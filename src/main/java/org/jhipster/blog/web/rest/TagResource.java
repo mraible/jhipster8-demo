@@ -58,11 +58,10 @@ public class TagResource {
         if (tag.getId() != null) {
             throw new BadRequestAlertException("A new tag cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Tag result = tagRepository.save(tag);
-        return ResponseEntity
-            .created(new URI("/api/tags/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        tag = tagRepository.save(tag);
+        return ResponseEntity.created(new URI("/api/tags/" + tag.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, tag.getId().toString()))
+            .body(tag);
     }
 
     /**
@@ -90,11 +89,10 @@ public class TagResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Tag result = tagRepository.save(tag);
-        return ResponseEntity
-            .ok()
+        tag = tagRepository.save(tag);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, tag.getId().toString()))
-            .body(result);
+            .body(tag);
     }
 
     /**
@@ -161,7 +159,7 @@ public class TagResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the tag, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> getTag(@PathVariable Long id) {
+    public ResponseEntity<Tag> getTag(@PathVariable("id") Long id) {
         log.debug("REST request to get Tag : {}", id);
         Optional<Tag> tag = tagRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(tag);
@@ -174,11 +172,10 @@ public class TagResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTag(@PathVariable("id") Long id) {
         log.debug("REST request to delete Tag : {}", id);
         tagRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

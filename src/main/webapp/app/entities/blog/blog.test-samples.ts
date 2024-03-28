@@ -1,26 +1,26 @@
 import { IBlog, NewBlog } from './blog.model';
 
 export const sampleWithRequiredData: IBlog = {
-  id: 22076,
-  name: 'phew but ew',
-  handle: 'outside below drat',
+  id: 31666,
+  name: 'pfft',
+  handle: 'rudely evil provided',
 };
 
 export const sampleWithPartialData: IBlog = {
-  id: 11734,
-  name: 'super with',
-  handle: 'hunter',
+  id: 19548,
+  name: 'through conduct walnut',
+  handle: 'when',
 };
 
 export const sampleWithFullData: IBlog = {
-  id: 27582,
-  name: 'because admirable',
-  handle: 'until',
+  id: 23764,
+  name: 'wonderfully',
+  handle: 'spear',
 };
 
 export const sampleWithNewData: NewBlog = {
-  name: 'judgementally',
-  handle: 'where',
+  name: 'above whoa girl',
+  handle: 'intention nurse behind',
   id: null,
 };
 

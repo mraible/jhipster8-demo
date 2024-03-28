@@ -7,7 +7,7 @@ import { mergeMap } from 'rxjs/operators';
 import { IBlog } from '../blog.model';
 import { BlogService } from '../service/blog.service';
 
-export const blogResolve = (route: ActivatedRouteSnapshot): Observable<null | IBlog> => {
+const blogResolve = (route: ActivatedRouteSnapshot): Observable<null | IBlog> => {
   const id = route.params['id'];
   if (id) {
     return inject(BlogService)

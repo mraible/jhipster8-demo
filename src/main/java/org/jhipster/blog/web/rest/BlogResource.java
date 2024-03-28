@@ -53,11 +53,10 @@ public class BlogResource {
         if (blog.getId() != null) {
             throw new BadRequestAlertException("A new blog cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Blog result = blogRepository.save(blog);
-        return ResponseEntity
-            .created(new URI("/api/blogs/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        blog = blogRepository.save(blog);
+        return ResponseEntity.created(new URI("/api/blogs/" + blog.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, blog.getId().toString()))
+            .body(blog);
     }
 
     /**
@@ -85,11 +84,10 @@ public class BlogResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Blog result = blogRepository.save(blog);
-        return ResponseEntity
-            .ok()
+        blog = blogRepository.save(blog);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, blog.getId().toString()))
-            .body(result);
+            .body(blog);
     }
 
     /**
@@ -147,7 +145,7 @@ public class BlogResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of blogs in body.
      */
     @GetMapping("")
-    public List<Blog> getAllBlogs(@RequestParam(required = false, defaultValue = "true") boolean eagerload) {
+    public List<Blog> getAllBlogs(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         log.debug("REST request to get all Blogs");
         if (eagerload) {
             return blogRepository.findAllWithEagerRelationships();
@@ -163,7 +161,7 @@ public class BlogResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the blog, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Blog> getBlog(@PathVariable Long id) {
+    public ResponseEntity<Blog> getBlog(@PathVariable("id") Long id) {
         log.debug("REST request to get Blog : {}", id);
         Optional<Blog> blog = blogRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(blog);
@@ -176,11 +174,10 @@ public class BlogResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBlog(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteBlog(@PathVariable("id") Long id) {
         log.debug("REST request to delete Blog : {}", id);
         blogRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

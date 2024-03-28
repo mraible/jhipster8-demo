@@ -7,10 +7,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
 import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { UserService } from 'app/entities/user/service/user.service';
 import { BlogService } from '../service/blog.service';
 import { IBlog } from '../blog.model';
-
 import { BlogFormService } from './blog-form.service';
 
 import { BlogUpdateComponent } from './blog-update.component';
@@ -51,10 +50,10 @@ describe('Blog Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call User query and add missing value', () => {
       const blog: IBlog = { id: 456 };
-      const user: IUser = { id: 28475 };
+      const user: IUser = { id: 1599 };
       blog.user = user;
 
-      const userCollection: IUser[] = [{ id: 25007 }];
+      const userCollection: IUser[] = [{ id: 7282 }];
       jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
       const additionalUsers = [user];
       const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
@@ -73,7 +72,7 @@ describe('Blog Management Update Component', () => {
 
     it('Should update editForm', () => {
       const blog: IBlog = { id: 456 };
-      const user: IUser = { id: 17699 };
+      const user: IUser = { id: 5714 };
       blog.user = user;
 
       activatedRoute.data = of({ blog });

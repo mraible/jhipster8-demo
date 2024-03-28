@@ -16,6 +16,9 @@ import org.springframework.data.domain.PageImpl;
  */
 public class PostRepositoryWithBagRelationshipsImpl implements PostRepositoryWithBagRelationships {
 
+    private static final String ID_PARAMETER = "id";
+    private static final String POSTS_PARAMETER = "posts";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -37,7 +40,7 @@ public class PostRepositoryWithBagRelationshipsImpl implements PostRepositoryWit
     Post fetchTags(Post result) {
         return entityManager
             .createQuery("select post from Post post left join fetch post.tags where post.id = :id", Post.class)
-            .setParameter("id", result.getId())
+            .setParameter(ID_PARAMETER, result.getId())
             .getSingleResult();
     }
 
@@ -46,7 +49,7 @@ public class PostRepositoryWithBagRelationshipsImpl implements PostRepositoryWit
         IntStream.range(0, posts.size()).forEach(index -> order.put(posts.get(index).getId(), index));
         List<Post> result = entityManager
             .createQuery("select post from Post post left join fetch post.tags where post in :posts", Post.class)
-            .setParameter("posts", posts)
+            .setParameter(POSTS_PARAMETER, posts)
             .getResultList();
         Collections.sort(result, (o1, o2) -> Integer.compare(order.get(o1.getId()), order.get(o2.getId())));
         return result;

@@ -3,30 +3,30 @@ import dayjs from 'dayjs/esm';
 import { IPost, NewPost } from './post.model';
 
 export const sampleWithRequiredData: IPost = {
-  id: 9086,
-  title: 'from drat aide',
+  id: 30552,
+  title: 'bah sweaty monotheism',
   content: '../fake-data/blob/hipster.txt',
-  date: dayjs('2024-03-19T21:56'),
+  date: dayjs('2024-03-19T17:17'),
 };
 
 export const sampleWithPartialData: IPost = {
-  id: 19478,
-  title: 'supposing',
+  id: 21310,
+  title: 'revise',
   content: '../fake-data/blob/hipster.txt',
-  date: dayjs('2024-03-19T20:01'),
+  date: dayjs('2024-03-19T18:51'),
 };
 
 export const sampleWithFullData: IPost = {
-  id: 12763,
-  title: 'gee down ruddy',
+  id: 32025,
+  title: 'decent marines hairy',
   content: '../fake-data/blob/hipster.txt',
-  date: dayjs('2024-03-19T16:51'),
+  date: dayjs('2024-03-20T05:25'),
 };
 
 export const sampleWithNewData: NewPost = {
-  title: 'as yuck predict',
+  title: 'regarding',
   content: '../fake-data/blob/hipster.txt',
-  date: dayjs('2024-03-20T00:43'),
+  date: dayjs('2024-03-19T17:46'),
   id: null,
 };
 

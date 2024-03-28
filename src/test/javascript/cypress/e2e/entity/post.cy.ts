@@ -15,7 +15,7 @@ describe('Post e2e test', () => {
   const postPageUrlPattern = new RegExp('/post(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const postSample = { title: 'duh regarding if', content: 'Li4vZmFrZS1kYXRhL2Jsb2IvaGlwc3Rlci50eHQ=', date: '2024-03-19T19:02:40.003Z' };
+  const postSample = { title: 'gee', content: 'Li4vZmFrZS1kYXRhL2Jsb2IvaGlwc3Rlci50eHQ=', date: '2024-03-20T04:55:32.698Z' };
 
   let post;
 
@@ -160,15 +160,15 @@ describe('Post e2e test', () => {
     });
 
     it('should create an instance of Post', () => {
-      cy.get(`[data-cy="title"]`).type('gee notable honest');
-      cy.get(`[data-cy="title"]`).should('have.value', 'gee notable honest');
+      cy.get(`[data-cy="title"]`).type('so');
+      cy.get(`[data-cy="title"]`).should('have.value', 'so');
 
       cy.get(`[data-cy="content"]`).type('../fake-data/blob/hipster.txt');
       cy.get(`[data-cy="content"]`).invoke('val').should('match', new RegExp('../fake-data/blob/hipster.txt'));
 
-      cy.get(`[data-cy="date"]`).type('2024-03-19T18:28');
+      cy.get(`[data-cy="date"]`).type('2024-03-20T06:17');
       cy.get(`[data-cy="date"]`).blur();
-      cy.get(`[data-cy="date"]`).should('have.value', '2024-03-19T18:28');
+      cy.get(`[data-cy="date"]`).should('have.value', '2024-03-20T06:17');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

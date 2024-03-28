@@ -58,11 +58,10 @@ public class PostResource {
         if (post.getId() != null) {
             throw new BadRequestAlertException("A new post cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Post result = postRepository.save(post);
-        return ResponseEntity
-            .created(new URI("/api/posts/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        post = postRepository.save(post);
+        return ResponseEntity.created(new URI("/api/posts/" + post.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, post.getId().toString()))
+            .body(post);
     }
 
     /**
@@ -90,11 +89,10 @@ public class PostResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Post result = postRepository.save(post);
-        return ResponseEntity
-            .ok()
+        post = postRepository.save(post);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, post.getId().toString()))
-            .body(result);
+            .body(post);
     }
 
     /**
@@ -158,7 +156,7 @@ public class PostResource {
     @GetMapping("")
     public ResponseEntity<List<Post>> getAllPosts(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
     ) {
         log.debug("REST request to get a page of Posts");
         Page<Post> page;
@@ -178,7 +176,7 @@ public class PostResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the post, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPost(@PathVariable Long id) {
+    public ResponseEntity<Post> getPost(@PathVariable("id") Long id) {
         log.debug("REST request to get Post : {}", id);
         Optional<Post> post = postRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(post);
@@ -191,11 +189,10 @@ public class PostResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePost(@PathVariable("id") Long id) {
         log.debug("REST request to delete Post : {}", id);
         postRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

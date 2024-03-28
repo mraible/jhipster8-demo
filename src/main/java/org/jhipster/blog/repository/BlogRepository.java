@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface BlogRepository extends JpaRepository<Blog, Long> {
-    @Query("select blog from Blog blog where blog.user.login = ?#{principal.username}")
+    @Query("select blog from Blog blog where blog.user.login = ?#{authentication.name}")
     List<Blog> findByUserIsCurrentUser();
 
     default Optional<Blog> findOneWithEagerRelationships(Long id) {

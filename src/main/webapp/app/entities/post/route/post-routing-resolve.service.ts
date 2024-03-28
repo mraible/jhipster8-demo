@@ -7,7 +7,7 @@ import { mergeMap } from 'rxjs/operators';
 import { IPost } from '../post.model';
 import { PostService } from '../service/post.service';
 
-export const postResolve = (route: ActivatedRouteSnapshot): Observable<null | IPost> => {
+const postResolve = (route: ActivatedRouteSnapshot): Observable<null | IPost> => {
   const id = route.params['id'];
   if (id) {
     return inject(PostService)

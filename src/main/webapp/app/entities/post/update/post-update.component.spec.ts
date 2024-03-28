@@ -54,10 +54,10 @@ describe('Post Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Blog query and add missing value', () => {
       const post: IPost = { id: 456 };
-      const blog: IBlog = { id: 13869 };
+      const blog: IBlog = { id: 16058 };
       post.blog = blog;
 
-      const blogCollection: IBlog[] = [{ id: 31519 }];
+      const blogCollection: IBlog[] = [{ id: 30850 }];
       jest.spyOn(blogService, 'query').mockReturnValue(of(new HttpResponse({ body: blogCollection })));
       const additionalBlogs = [blog];
       const expectedCollection: IBlog[] = [...additionalBlogs, ...blogCollection];
@@ -76,10 +76,10 @@ describe('Post Management Update Component', () => {
 
     it('Should call Tag query and add missing value', () => {
       const post: IPost = { id: 456 };
-      const tags: ITag[] = [{ id: 24275 }];
+      const tags: ITag[] = [{ id: 2805 }];
       post.tags = tags;
 
-      const tagCollection: ITag[] = [{ id: 1426 }];
+      const tagCollection: ITag[] = [{ id: 32266 }];
       jest.spyOn(tagService, 'query').mockReturnValue(of(new HttpResponse({ body: tagCollection })));
       const additionalTags = [...tags];
       const expectedCollection: ITag[] = [...additionalTags, ...tagCollection];
@@ -95,9 +95,9 @@ describe('Post Management Update Component', () => {
 
     it('Should update editForm', () => {
       const post: IPost = { id: 456 };
-      const blog: IBlog = { id: 14794 };
+      const blog: IBlog = { id: 2733 };
       post.blog = blog;
-      const tag: ITag = { id: 26695 };
+      const tag: ITag = { id: 8519 };
       post.tags = [tag];
 
       activatedRoute.data = of({ post });

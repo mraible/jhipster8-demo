@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { IPost } from 'app/entities/post/post.model';
+import { PostService } from 'app/entities/post/service/post.service';
 import { ITag } from '../tag.model';
 import { TagService } from '../service/tag.service';
 import { TagFormService, TagFormGroup } from './tag-form.service';
@@ -21,13 +23,17 @@ export class TagUpdateComponent implements OnInit {
   isSaving = false;
   tag: ITag | null = null;
 
+  postsSharedCollection: IPost[] = [];
+
+  protected tagService = inject(TagService);
+  protected tagFormService = inject(TagFormService);
+  protected postService = inject(PostService);
+  protected activatedRoute = inject(ActivatedRoute);
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: TagFormGroup = this.tagFormService.createTagFormGroup();
 
-  constructor(
-    protected tagService: TagService,
-    protected tagFormService: TagFormService,
-    protected activatedRoute: ActivatedRoute,
-  ) {}
+  comparePost = (o1: IPost | null, o2: IPost | null): boolean => this.postService.comparePost(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ tag }) => {
@@ -35,6 +41,8 @@ export class TagUpdateComponent implements OnInit {
       if (tag) {
         this.updateForm(tag);
       }
+
+      this.loadRelationshipsOptions();
     });
   }
 
@@ -74,5 +82,15 @@ export class TagUpdateComponent implements OnInit {
   protected updateForm(tag: ITag): void {
     this.tag = tag;
     this.tagFormService.resetForm(this.editForm, tag);
+
+    this.postsSharedCollection = this.postService.addPostToCollectionIfMissing<IPost>(this.postsSharedCollection, ...(tag.posts ?? []));
+  }
+
+  protected loadRelationshipsOptions(): void {
+    this.postService
+      .query()
+      .pipe(map((res: HttpResponse<IPost[]>) => res.body ?? []))
+      .pipe(map((posts: IPost[]) => this.postService.addPostToCollectionIfMissing<IPost>(posts, ...(this.tag?.posts ?? []))))
+      .subscribe((posts: IPost[]) => (this.postsSharedCollection = posts));
   }
 }

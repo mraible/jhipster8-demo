@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -14,12 +14,10 @@ export type EntityArrayResponseType = HttpResponse<ITag[]>;
 
 @Injectable({ providedIn: 'root' })
 export class TagService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/tags');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/tags');
 
   create(tag: NewTag): Observable<EntityResponseType> {
     return this.http.post<ITag>(this.resourceUrl, tag, { observe: 'response' });
@@ -57,7 +55,7 @@ export class TagService {
   addTagToCollectionIfMissing<Type extends Pick<ITag, 'id'>>(tagCollection: Type[], ...tagsToCheck: (Type | null | undefined)[]): Type[] {
     const tags: Type[] = tagsToCheck.filter(isPresent);
     if (tags.length > 0) {
-      const tagCollectionIdentifiers = tagCollection.map(tagItem => this.getTagIdentifier(tagItem)!);
+      const tagCollectionIdentifiers = tagCollection.map(tagItem => this.getTagIdentifier(tagItem));
       const tagsToAdd = tags.filter(tagItem => {
         const tagIdentifier = this.getTagIdentifier(tagItem);
         if (tagCollectionIdentifiers.includes(tagIdentifier)) {
