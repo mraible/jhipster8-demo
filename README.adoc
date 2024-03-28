@@ -1,7 +1,7 @@
 = Get Started with JHipster 8
 :author: Matt Raible
 :email:  matt@raibledesigns.com
-:revnumber: 1.0
+:revnumber: 1.1
 :revdate: {docdate}
 :subject: JHipster
 :keywords: JHipster, Spring Boot, Angular, JWT, Authorization, Heroku
@@ -28,7 +28,7 @@ ifdef::env-github[]
 endif::[]
 :toc:
 
-This article shows you how to build a simple blog application with https://www.jhipster.tech/2023/12/11/jhipster-release-8.1.0.html[JHipster 8.1.0]. You can also https://www.youtube.com/watch?v=IfyjKCt6YHE[watch a screencast of this tutorial on YouTube].
+This article shows you how to build a simple blog application with https://www.jhipster.tech/2024/03/20/jhipster-release-8.2.1.html[JHipster 8.2.1]. You can also https://www.youtube.com/watch?v=IfyjKCt6YHE[watch a screencast of this tutorial on YouTube].
 
 ifdef::env-github[]
 TIP: It appears you're reading this document on GitHub. If you want a prettier view, install https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia[Asciidoctor.js Live Preview for Chrome], then view the https://raw.githubusercontent.com/mraible/jhipster8-demo/main/README.adoc?toc=left[raw document]. Another option is to use the https://gist.asciidoctor.org/?github-mraible%2Fjhipster8-demo%2Fmain%2F%2FREADME.adoc[DocGist view].
@@ -53,7 +53,7 @@ The http://www.jhipster.tech/installation/[Installing JHipster] instructions sho
 
 . Install Java 17 https://sdkman.io/[using SDKMAN!]
 . Install Git from https://git-scm.com.
-. Install Node.js from http://nodejs.org. JHipster recommends using Node 18.
+. Install Node.js from http://nodejs.org. JHipster recommends using Node 20.
 . Run the following command to install JHipster.
 
     npm i -g generator-jhipster@8
@@ -92,7 +92,7 @@ If you'd like to create the same application I did, you can place the following 
     "entities": ["Blog", "Post", "Tag"],
     "feignClient": false,
     "gradleEnterpriseHost": null,
-    "jhipsterVersion": "8.1.0",
+    "jhipsterVersion": "8.2.1",
     "jwtSecretKey": "YjFjNDdlM2FhMzBlYmMwZTJjNjAxNjg2OWZhOTY1M2Y1YTdlYzk3ZjFiYTBkMmUwODEyMGJiMjYxMGU5Zjg4MDM5ZDhiODkxNjc2NDc0NDMwMzU4NGIxMDBlMGM1MWEyNjAwM2ZjYTRjNmE2ZjM1OTZkN2I5NTU3Yzk0MjU2MTk=",
     "languages": ["en", "es"],
     "lastLiquibaseTimestamp": 1702525214000,
@@ -743,6 +743,6 @@ Follow https://twitter.com/jhipster[@jhipster] on Twitter for release announceme
 
 == About the Author
 
-**Matt Raible** is a web developer, Java Champion, and Developer Advocate Architect at https://developer.auth0.com[Okta]. Matt is a frequent contributor to open source and a big fan of Java, GraalVM, IntelliJ, TypeScript, Angular, and Spring Boot. When he's not slinging code with open source frameworks, he likes to ski and raft with his family, drive his classic VWs, and enjoy craft beer.
+**Matt Raible** is a web developer and Java Champion. Matt is a frequent contributor to open source and a big fan of Java, GraalVM, IntelliJ, TypeScript, Angular, and Spring Boot. When he's not slinging code with open source frameworks, he likes to ski and raft with his family, drive his classic VWs, and enjoy craft beer.
 
-Matt writes on the https://auth0.com/blog/authors/matt-raible/[Auth0 blog], for https://www.infoq.com/profile/Matt-Raible/[InfoQ], and on his https://raibledesigns.com/[personal blog]. You can find him on Twitter https://twitter.com/mraible[@mraible] and LinkedIn https://linkedin.com/in/mraible[@in/mraible].
+Matt writes on his https://raibledesigns.com/[personal blog]. You can also find him on Twitter https://twitter.com/mraible[@mraible] and LinkedIn https://linkedin.com/in/mraible[@in/mraible].

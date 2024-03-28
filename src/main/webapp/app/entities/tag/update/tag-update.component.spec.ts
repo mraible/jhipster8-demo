@@ -6,6 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
+import { IPost } from 'app/entities/post/post.model';
+import { PostService } from 'app/entities/post/service/post.service';
 import { TagService } from '../service/tag.service';
 import { ITag } from '../tag.model';
 import { TagFormService } from './tag-form.service';
@@ -18,6 +20,7 @@ describe('Tag Management Update Component', () => {
   let activatedRoute: ActivatedRoute;
   let tagFormService: TagFormService;
   let tagService: TagService;
+  let postService: PostService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -39,17 +42,43 @@ describe('Tag Management Update Component', () => {
     activatedRoute = TestBed.inject(ActivatedRoute);
     tagFormService = TestBed.inject(TagFormService);
     tagService = TestBed.inject(TagService);
+    postService = TestBed.inject(PostService);
 
     comp = fixture.componentInstance;
   });
 
   describe('ngOnInit', () => {
-    it('Should update editForm', () => {
+    it('Should call Post query and add missing value', () => {
       const tag: ITag = { id: 456 };
+      const posts: IPost[] = [{ id: 120 }];
+      tag.posts = posts;
+
+      const postCollection: IPost[] = [{ id: 22664 }];
+      jest.spyOn(postService, 'query').mockReturnValue(of(new HttpResponse({ body: postCollection })));
+      const additionalPosts = [...posts];
+      const expectedCollection: IPost[] = [...additionalPosts, ...postCollection];
+      jest.spyOn(postService, 'addPostToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ tag });
       comp.ngOnInit();
 
+      expect(postService.query).toHaveBeenCalled();
+      expect(postService.addPostToCollectionIfMissing).toHaveBeenCalledWith(
+        postCollection,
+        ...additionalPosts.map(expect.objectContaining),
+      );
+      expect(comp.postsSharedCollection).toEqual(expectedCollection);
+    });
+
+    it('Should update editForm', () => {
+      const tag: ITag = { id: 456 };
+      const post: IPost = { id: 27739 };
+      tag.posts = [post];
+
+      activatedRoute.data = of({ tag });
+      comp.ngOnInit();
+
+      expect(comp.postsSharedCollection).toContain(post);
       expect(comp.tag).toEqual(tag);
     });
   });
@@ -119,6 +148,18 @@ describe('Tag Management Update Component', () => {
       expect(tagService.update).toHaveBeenCalled();
       expect(comp.isSaving).toEqual(false);
       expect(comp.previousState).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Compare relationships', () => {
+    describe('comparePost', () => {
+      it('Should forward to postService', () => {
+        const entity = { id: 123 };
+        const entity2 = { id: 456 };
+        jest.spyOn(postService, 'comparePost');
+        comp.comparePost(entity, entity2);
+        expect(postService.comparePost).toHaveBeenCalledWith(entity, entity2);
+      });
     });
   });
 });

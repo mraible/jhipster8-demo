@@ -19,6 +19,15 @@
           <dd>
             <span>{{ tag.name }}</span>
           </dd>
+          <dt><span jhiTranslate="blogApp.tag.post">Post</span></dt>
+          <dd>
+            @for (post of tag.posts; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/post', post.id, 'view']">{{ post.id }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
         </dl>
 
         <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

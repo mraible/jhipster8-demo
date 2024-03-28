@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -15,10 +15,8 @@ import { BlogService } from '../service/blog.service';
 export class BlogDeleteDialogComponent {
   blog?: IBlog;
 
-  constructor(
-    protected blogService: BlogService,
-    protected activeModal: NgbActiveModal,
-  ) {}
+  protected blogService = inject(BlogService);
+  protected activeModal = inject(NgbActiveModal);
 
   cancel(): void {
     this.activeModal.dismiss();

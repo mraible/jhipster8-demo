@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -15,10 +15,8 @@ import { PostService } from '../service/post.service';
 export class PostDeleteDialogComponent {
   post?: IPost;
 
-  constructor(
-    protected postService: PostService,
-    protected activeModal: NgbActiveModal,
-  ) {}
+  protected postService = inject(PostService);
+  protected activeModal = inject(NgbActiveModal);
 
   cancel(): void {
     this.activeModal.dismiss();

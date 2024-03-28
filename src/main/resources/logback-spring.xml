@@ -27,6 +27,8 @@
     </root>
     -->
 
+    <logger name="org.jhipster.blog" level="INFO"/>
+
     <logger name="angus.activation" level="WARN"/>
     <logger name="jakarta.activation" level="WARN"/>
     <logger name="jakarta.mail" level="WARN"/>

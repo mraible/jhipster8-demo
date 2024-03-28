@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -8,7 +8,7 @@ import SharedModule from 'app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { UserService } from 'app/entities/user/service/user.service';
 import { IBlog } from '../blog.model';
 import { BlogService } from '../service/blog.service';
 import { BlogFormService, BlogFormGroup } from './blog-form.service';
@@ -25,14 +25,13 @@ export class BlogUpdateComponent implements OnInit {
 
   usersSharedCollection: IUser[] = [];
 
-  editForm: BlogFormGroup = this.blogFormService.createBlogFormGroup();
+  protected blogService = inject(BlogService);
+  protected blogFormService = inject(BlogFormService);
+  protected userService = inject(UserService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected blogService: BlogService,
-    protected blogFormService: BlogFormService,
-    protected userService: UserService,
-    protected activatedRoute: ActivatedRoute,
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: BlogFormGroup = this.blogFormService.createBlogFormGroup();
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
 

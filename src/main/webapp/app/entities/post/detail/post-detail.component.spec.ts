@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
@@ -8,6 +8,8 @@ import { DataUtils } from 'app/core/util/data-util.service';
 import { PostDetailComponent } from './post-detail.component';
 
 describe('Post Management Detail Component', () => {
+  let comp: PostDetailComponent;
+  let fixture: ComponentFixture<PostDetailComponent>;
   let dataUtils: DataUtils;
 
   beforeEach(async () => {
@@ -32,6 +34,11 @@ describe('Post Management Detail Component', () => {
     jest.spyOn(window, 'open').mockImplementation(() => null);
   });
 
+  beforeEach(() => {
+    fixture = TestBed.createComponent(PostDetailComponent);
+    comp = fixture.componentInstance;
+  });
+
   describe('OnInit', () => {
     it('Should load post on init', async () => {
       const harness = await RouterTestingHarness.create();
@@ -42,13 +49,19 @@ describe('Post Management Detail Component', () => {
     });
   });
 
+  describe('PreviousState', () => {
+    it('Should navigate to previous state', () => {
+      jest.spyOn(window.history, 'back');
+      comp.previousState();
+      expect(window.history.back).toHaveBeenCalled();
+    });
+  });
+
   describe('byteSize', () => {
     it('Should call byteSize from DataUtils', () => {
       // GIVEN
       jest.spyOn(dataUtils, 'byteSize');
       const fakeBase64 = 'fake base64';
-      const fixture = TestBed.createComponent(PostDetailComponent);
-      const comp = fixture.componentInstance;
 
       // WHEN
       comp.byteSize(fakeBase64);
@@ -69,8 +82,6 @@ describe('Post Management Detail Component', () => {
       jest.spyOn(dataUtils, 'openFile');
       const fakeContentType = 'fake content type';
       const fakeBase64 = 'fake base64';
-      const fixture = TestBed.createComponent(PostDetailComponent);
-      const comp = fixture.componentInstance;
 
       // WHEN
       comp.openFile(fakeBase64, fakeContentType);

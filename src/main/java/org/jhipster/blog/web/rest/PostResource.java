@@ -68,17 +68,17 @@ public class PostResource {
         ) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        Post result = postRepository.save(post);
-        return ResponseEntity
-            .created(new URI("/api/posts/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+
+        post = postRepository.save(post);
+        return ResponseEntity.created(new URI("/api/posts/" + post.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, post.getId().toString()))
+            .body(post);
     }
 
     /**
      * {@code PUT  /posts/:id} : Updates an existing post.
      *
-     * @param id   the id of the post to save.
+     * @param id the id of the post to save.
      * @param post the post to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated post,
      * or with status {@code 400 (Bad Request)} if the post is not valid,
@@ -106,17 +106,16 @@ public class PostResource {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        Post result = postRepository.save(post);
-        return ResponseEntity
-            .ok()
+        post = postRepository.save(post);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, post.getId().toString()))
-            .body(result);
+            .body(post);
     }
 
     /**
      * {@code PATCH  /posts/:id} : Partial updates given fields of an existing post, field will ignore if it is null
      *
-     * @param id   the id of the post to save.
+     * @param id the id of the post to save.
      * @param post the post to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated post,
      * or with status {@code 400 (Bad Request)} if the post is not valid,
@@ -169,7 +168,7 @@ public class PostResource {
     /**
      * {@code GET  /posts} : get all the posts.
      *
-     * @param pageable  the pagination information.
+     * @param pageable the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of posts in body.
      */
@@ -201,10 +200,11 @@ public class PostResource {
         Optional<Post> post = postRepository.findOneWithEagerRelationships(id);
         if (post.isPresent()) {
             post
-                .filter(p ->
-                    p.getBlog() != null &&
-                    p.getBlog().getUser() != null &&
-                    p.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+                .filter(
+                    p ->
+                        p.getBlog() != null &&
+                        p.getBlog().getUser() != null &&
+                        p.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
                 )
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
         }
@@ -225,8 +225,7 @@ public class PostResource {
             .filter(p -> p.getBlog() != null && p.getBlog().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse("")))
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN));
         postRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -31,17 +31,16 @@ export class PostUpdateComponent implements OnInit {
   blogsSharedCollection: IBlog[] = [];
   tagsSharedCollection: ITag[] = [];
 
-  editForm: PostFormGroup = this.postFormService.createPostFormGroup();
+  protected dataUtils = inject(DataUtils);
+  protected eventManager = inject(EventManager);
+  protected postService = inject(PostService);
+  protected postFormService = inject(PostFormService);
+  protected blogService = inject(BlogService);
+  protected tagService = inject(TagService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected dataUtils: DataUtils,
-    protected eventManager: EventManager,
-    protected postService: PostService,
-    protected postFormService: PostFormService,
-    protected blogService: BlogService,
-    protected tagService: TagService,
-    protected activatedRoute: ActivatedRoute,
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: PostFormGroup = this.postFormService.createPostFormGroup();
 
   compareBlog = (o1: IBlog | null, o2: IBlog | null): boolean => this.blogService.compareBlog(o1, o2);
 

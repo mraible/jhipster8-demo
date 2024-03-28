@@ -29,15 +29,9 @@
       <span jhiTranslate="blogApp.post.home.notFound">No Posts found</span>
     </div>
   }
-
   @if (posts && posts.length) {
     <div class="table-responsive table-entities" id="entities">
-      <div
-        infinite-scroll
-        (scrolled)="loadPage(page + 1)"
-        [infiniteScrollDisabled]="page - 1 >= links['last']"
-        [infiniteScrollDistance]="0"
-      >
+      <div infinite-scroll (scrolled)="loadNextPage()" [infiniteScrollDisabled]="!hasMorePage()" [infiniteScrollDistance]="0">
         @for (post of posts; track trackId) {
           <div data-cy="entityTable">
             <a [routerLink]="['/post', post.id, 'view']" data-cy="entityDetailsButton">

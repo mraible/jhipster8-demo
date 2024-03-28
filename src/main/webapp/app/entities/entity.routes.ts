@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: 'authority',
+    data: { pageTitle: 'blogApp.adminAuthority.home.title' },
+    loadChildren: () => import('./admin/authority/authority.routes'),
+  },
+  {
     path: 'blog',
     data: { pageTitle: 'blogApp.blog.home.title' },
     loadChildren: () => import('./blog/blog.routes'),

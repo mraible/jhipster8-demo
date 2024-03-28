@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -14,12 +14,10 @@ export type EntityArrayResponseType = HttpResponse<IBlog[]>;
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/blogs');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/blogs');
 
   create(blog: NewBlog): Observable<EntityResponseType> {
     return this.http.post<IBlog>(this.resourceUrl, blog, { observe: 'response' });
@@ -60,7 +58,7 @@ export class BlogService {
   ): Type[] {
     const blogs: Type[] = blogsToCheck.filter(isPresent);
     if (blogs.length > 0) {
-      const blogCollectionIdentifiers = blogCollection.map(blogItem => this.getBlogIdentifier(blogItem)!);
+      const blogCollectionIdentifiers = blogCollection.map(blogItem => this.getBlogIdentifier(blogItem));
       const blogsToAdd = blogs.filter(blogItem => {
         const blogIdentifier = this.getBlogIdentifier(blogItem);
         if (blogCollectionIdentifiers.includes(blogIdentifier)) {

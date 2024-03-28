@@ -2,10 +2,13 @@ package org.jhipster.blog.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.jhipster.blog.domain.BlogAsserts.*;
+import static org.jhipster.blog.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +55,9 @@ class BlogResourceIT {
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private BlogRepository blogRepository;
@@ -110,18 +116,21 @@ class BlogResourceIT {
     @Test
     @Transactional
     void createBlog() throws Exception {
-        int databaseSizeBeforeCreate = blogRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Blog
-        restBlogMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(blog)))
-            .andExpect(status().isCreated());
+        var returnedBlog = om.readValue(
+            restBlogMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(blog)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Blog.class
+        );
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeCreate + 1);
-        Blog testBlog = blogList.get(blogList.size() - 1);
-        assertThat(testBlog.getName()).isEqualTo(DEFAULT_NAME);
-        assertThat(testBlog.getHandle()).isEqualTo(DEFAULT_HANDLE);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertBlogUpdatableFieldsEquals(returnedBlog, getPersistedBlog(returnedBlog));
     }
 
     @Test
@@ -130,50 +139,47 @@ class BlogResourceIT {
         // Create the Blog with an existing ID
         blog.setId(1L);
 
-        int databaseSizeBeforeCreate = blogRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restBlogMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(blog)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(blog)))
             .andExpect(status().isBadRequest());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
     }
 
     @Test
     @Transactional
     void checkNameIsRequired() throws Exception {
-        int databaseSizeBeforeTest = blogRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
         blog.setName(null);
 
         // Create the Blog, which fails.
 
         restBlogMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(blog)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(blog)))
             .andExpect(status().isBadRequest());
 
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
     }
 
     @Test
     @Transactional
     void checkHandleIsRequired() throws Exception {
-        int databaseSizeBeforeTest = blogRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
         blog.setHandle(null);
 
         // Create the Blog, which fails.
 
         restBlogMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(blog)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(blog)))
             .andExpect(status().isBadRequest());
 
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
     }
 
     @Test
@@ -238,7 +244,7 @@ class BlogResourceIT {
         // Initialize the database
         blogRepository.saveAndFlush(blog);
 
-        int databaseSizeBeforeUpdate = blogRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the blog
         Blog updatedBlog = blogRepository.findById(blog.getId()).orElseThrow();
@@ -250,42 +256,34 @@ class BlogResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, updatedBlog.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedBlog))
+                    .content(om.writeValueAsBytes(updatedBlog))
             )
             .andExpect(status().isOk());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
-        Blog testBlog = blogList.get(blogList.size() - 1);
-        assertThat(testBlog.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testBlog.getHandle()).isEqualTo(UPDATED_HANDLE);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedBlogToMatchAllProperties(updatedBlog);
     }
 
     @Test
     @Transactional
     void putNonExistingBlog() throws Exception {
-        int databaseSizeBeforeUpdate = blogRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         blog.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restBlogMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, blog.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(blog))
-            )
+            .perform(put(ENTITY_API_URL_ID, blog.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(blog)))
             .andExpect(status().isBadRequest());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchBlog() throws Exception {
-        int databaseSizeBeforeUpdate = blogRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         blog.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -293,29 +291,27 @@ class BlogResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(blog))
+                    .content(om.writeValueAsBytes(blog))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamBlog() throws Exception {
-        int databaseSizeBeforeUpdate = blogRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         blog.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBlogMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(blog)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(blog)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -324,28 +320,23 @@ class BlogResourceIT {
         // Initialize the database
         blogRepository.saveAndFlush(blog);
 
-        int databaseSizeBeforeUpdate = blogRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the blog using partial update
         Blog partialUpdatedBlog = new Blog();
         partialUpdatedBlog.setId(blog.getId());
 
-        partialUpdatedBlog.handle(UPDATED_HANDLE);
-
         restBlogMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedBlog.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedBlog))
+                    .content(om.writeValueAsBytes(partialUpdatedBlog))
             )
             .andExpect(status().isOk());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
-        Blog testBlog = blogList.get(blogList.size() - 1);
-        assertThat(testBlog.getName()).isEqualTo(DEFAULT_NAME);
-        assertThat(testBlog.getHandle()).isEqualTo(UPDATED_HANDLE);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertBlogUpdatableFieldsEquals(createUpdateProxyForBean(partialUpdatedBlog, blog), getPersistedBlog(blog));
     }
 
     @Test
@@ -354,7 +345,7 @@ class BlogResourceIT {
         // Initialize the database
         blogRepository.saveAndFlush(blog);
 
-        int databaseSizeBeforeUpdate = blogRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the blog using partial update
         Blog partialUpdatedBlog = new Blog();
@@ -366,42 +357,34 @@ class BlogResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedBlog.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedBlog))
+                    .content(om.writeValueAsBytes(partialUpdatedBlog))
             )
             .andExpect(status().isOk());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
-        Blog testBlog = blogList.get(blogList.size() - 1);
-        assertThat(testBlog.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testBlog.getHandle()).isEqualTo(UPDATED_HANDLE);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertBlogUpdatableFieldsEquals(partialUpdatedBlog, getPersistedBlog(partialUpdatedBlog));
     }
 
     @Test
     @Transactional
     void patchNonExistingBlog() throws Exception {
-        int databaseSizeBeforeUpdate = blogRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         blog.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restBlogMockMvc
-            .perform(
-                patch(ENTITY_API_URL_ID, blog.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(blog))
-            )
+            .perform(patch(ENTITY_API_URL_ID, blog.getId()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(blog)))
             .andExpect(status().isBadRequest());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchBlog() throws Exception {
-        int databaseSizeBeforeUpdate = blogRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         blog.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -409,29 +392,27 @@ class BlogResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(blog))
+                    .content(om.writeValueAsBytes(blog))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamBlog() throws Exception {
-        int databaseSizeBeforeUpdate = blogRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         blog.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBlogMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(blog)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(blog)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Blog in the database
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -440,7 +421,7 @@ class BlogResourceIT {
         // Initialize the database
         blogRepository.saveAndFlush(blog);
 
-        int databaseSizeBeforeDelete = blogRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
 
         // Delete the blog
         restBlogMockMvc
@@ -448,7 +429,34 @@ class BlogResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Blog> blogList = blogRepository.findAll();
-        assertThat(blogList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+    }
+
+    protected long getRepositoryCount() {
+        return blogRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Blog getPersistedBlog(Blog blog) {
+        return blogRepository.findById(blog.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedBlogToMatchAllProperties(Blog expectedBlog) {
+        assertBlogAllPropertiesEquals(expectedBlog, getPersistedBlog(expectedBlog));
+    }
+
+    protected void assertPersistedBlogToMatchUpdatableProperties(Blog expectedBlog) {
+        assertBlogAllUpdatablePropertiesEquals(expectedBlog, getPersistedBlog(expectedBlog));
     }
 }

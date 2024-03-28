@@ -2,11 +2,13 @@ package org.jhipster.blog.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.jhipster.blog.domain.TagAsserts.*;
+import static org.jhipster.blog.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.jhipster.blog.IntegrationTest;
@@ -37,6 +39,9 @@ class TagResourceIT {
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private TagRepository tagRepository;
@@ -79,17 +84,21 @@ class TagResourceIT {
     @Test
     @Transactional
     void createTag() throws Exception {
-        int databaseSizeBeforeCreate = tagRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Tag
-        restTagMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(tag)))
-            .andExpect(status().isCreated());
+        var returnedTag = om.readValue(
+            restTagMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(tag)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Tag.class
+        );
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeCreate + 1);
-        Tag testTag = tagList.get(tagList.size() - 1);
-        assertThat(testTag.getName()).isEqualTo(DEFAULT_NAME);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertTagUpdatableFieldsEquals(returnedTag, getPersistedTag(returnedTag));
     }
 
     @Test
@@ -98,33 +107,31 @@ class TagResourceIT {
         // Create the Tag with an existing ID
         tag.setId(1L);
 
-        int databaseSizeBeforeCreate = tagRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTagMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(tag)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(tag)))
             .andExpect(status().isBadRequest());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
     }
 
     @Test
     @Transactional
     void checkNameIsRequired() throws Exception {
-        int databaseSizeBeforeTest = tagRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
         tag.setName(null);
 
         // Create the Tag, which fails.
 
         restTagMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(tag)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(tag)))
             .andExpect(status().isBadRequest());
 
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
     }
 
     @Test
@@ -170,7 +177,7 @@ class TagResourceIT {
         // Initialize the database
         tagRepository.saveAndFlush(tag);
 
-        int databaseSizeBeforeUpdate = tagRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the tag
         Tag updatedTag = tagRepository.findById(tag.getId()).orElseThrow();
@@ -180,41 +187,34 @@ class TagResourceIT {
 
         restTagMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedTag.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedTag))
+                put(ENTITY_API_URL_ID, updatedTag.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(updatedTag))
             )
             .andExpect(status().isOk());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
-        Tag testTag = tagList.get(tagList.size() - 1);
-        assertThat(testTag.getName()).isEqualTo(UPDATED_NAME);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedTagToMatchAllProperties(updatedTag);
     }
 
     @Test
     @Transactional
     void putNonExistingTag() throws Exception {
-        int databaseSizeBeforeUpdate = tagRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         tag.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTagMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, tag.getId()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(tag))
-            )
+            .perform(put(ENTITY_API_URL_ID, tag.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(tag)))
             .andExpect(status().isBadRequest());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchTag() throws Exception {
-        int databaseSizeBeforeUpdate = tagRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         tag.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -222,29 +222,27 @@ class TagResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(tag))
+                    .content(om.writeValueAsBytes(tag))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamTag() throws Exception {
-        int databaseSizeBeforeUpdate = tagRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         tag.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTagMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(tag)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(tag)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -253,7 +251,7 @@ class TagResourceIT {
         // Initialize the database
         tagRepository.saveAndFlush(tag);
 
-        int databaseSizeBeforeUpdate = tagRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the tag using partial update
         Tag partialUpdatedTag = new Tag();
@@ -265,15 +263,14 @@ class TagResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedTag.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedTag))
+                    .content(om.writeValueAsBytes(partialUpdatedTag))
             )
             .andExpect(status().isOk());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
-        Tag testTag = tagList.get(tagList.size() - 1);
-        assertThat(testTag.getName()).isEqualTo(UPDATED_NAME);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertTagUpdatableFieldsEquals(createUpdateProxyForBean(partialUpdatedTag, tag), getPersistedTag(tag));
     }
 
     @Test
@@ -282,7 +279,7 @@ class TagResourceIT {
         // Initialize the database
         tagRepository.saveAndFlush(tag);
 
-        int databaseSizeBeforeUpdate = tagRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the tag using partial update
         Tag partialUpdatedTag = new Tag();
@@ -294,41 +291,35 @@ class TagResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedTag.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedTag))
+                    .content(om.writeValueAsBytes(partialUpdatedTag))
             )
             .andExpect(status().isOk());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
-        Tag testTag = tagList.get(tagList.size() - 1);
-        assertThat(testTag.getName()).isEqualTo(UPDATED_NAME);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertTagUpdatableFieldsEquals(partialUpdatedTag, getPersistedTag(partialUpdatedTag));
     }
 
     @Test
     @Transactional
     void patchNonExistingTag() throws Exception {
-        int databaseSizeBeforeUpdate = tagRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         tag.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTagMockMvc
-            .perform(
-                patch(ENTITY_API_URL_ID, tag.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(tag))
-            )
+            .perform(patch(ENTITY_API_URL_ID, tag.getId()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(tag)))
             .andExpect(status().isBadRequest());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchTag() throws Exception {
-        int databaseSizeBeforeUpdate = tagRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         tag.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -336,29 +327,27 @@ class TagResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(tag))
+                    .content(om.writeValueAsBytes(tag))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamTag() throws Exception {
-        int databaseSizeBeforeUpdate = tagRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         tag.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTagMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(tag)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(tag)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Tag in the database
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -367,13 +356,40 @@ class TagResourceIT {
         // Initialize the database
         tagRepository.saveAndFlush(tag);
 
-        int databaseSizeBeforeDelete = tagRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
 
         // Delete the tag
         restTagMockMvc.perform(delete(ENTITY_API_URL_ID, tag.getId()).accept(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+    }
+
+    protected long getRepositoryCount() {
+        return tagRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Tag getPersistedTag(Tag tag) {
+        return tagRepository.findById(tag.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedTagToMatchAllProperties(Tag expectedTag) {
+        assertTagAllPropertiesEquals(expectedTag, getPersistedTag(expectedTag));
+    }
+
+    protected void assertPersistedTagToMatchUpdatableProperties(Tag expectedTag) {
+        assertTagAllUpdatablePropertiesEquals(expectedTag, getPersistedTag(expectedTag));
     }
 }
