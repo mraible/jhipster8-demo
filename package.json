@@ -121,7 +121,7 @@
     "@angular/service-worker": "17.3.0",
     "@cypress/code-coverage": "3.12.30",
     "@types/jest": "29.5.12",
-    "@types/node": "20.11.30",
+    "@types/node": "20.12.2",
     "@typescript-eslint/eslint-plugin": "7.3.1",
     "@typescript-eslint/parser": "7.3.1",
     "babel-loader": "9.1.3",
