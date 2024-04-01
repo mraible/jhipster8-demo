@@ -119,7 +119,7 @@
     "@angular/cli": "17.3.0",
     "@angular/compiler-cli": "17.3.0",
     "@angular/service-worker": "17.3.0",
-    "@cypress/code-coverage": "3.12.30",
+    "@cypress/code-coverage": "3.12.33",
     "@types/jest": "29.5.12",
     "@types/node": "20.12.2",
     "@typescript-eslint/eslint-plugin": "7.3.1",
