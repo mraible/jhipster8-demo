@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { TagDetailComponent } from './tag-detail.component';
@@ -11,7 +11,7 @@ describe('Tag Management Detail Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TagDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [TagDetailComponent],
       providers: [
         provideRouter(
           [
@@ -40,7 +40,7 @@ describe('Tag Management Detail Component', () => {
       const instance = await harness.navigateByUrl('/', TagDetailComponent);
 
       // THEN
-      expect(instance.tag).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.tag()).toEqual(expect.objectContaining({ id: 123 }));
     });
   });
 

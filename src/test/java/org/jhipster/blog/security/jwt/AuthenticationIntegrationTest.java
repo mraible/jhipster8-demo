@@ -10,7 +10,6 @@ import org.jhipster.blog.config.WebConfigurer;
 import org.jhipster.blog.management.SecurityMetersService;
 import org.jhipster.blog.web.rest.AuthenticateController;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.jhipster.config.JHipsterProperties;
 
 @Target(ElementType.TYPE)
@@ -30,6 +29,5 @@ import tech.jhipster.config.JHipsterProperties;
         JwtAuthenticationTestUtils.class,
     }
 )
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public @interface AuthenticationIntegrationTest {
 }

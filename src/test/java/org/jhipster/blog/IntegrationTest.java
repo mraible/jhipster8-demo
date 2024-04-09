@@ -8,7 +8,6 @@ import org.jhipster.blog.config.AsyncSyncConfiguration;
 import org.jhipster.blog.config.EmbeddedSQL;
 import org.jhipster.blog.config.JacksonConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * Base composite annotation for integration tests.
@@ -17,6 +16,5 @@ import org.springframework.test.annotation.DirtiesContext;
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(classes = { BlogApp.class, JacksonConfiguration.class, AsyncSyncConfiguration.class })
 @EmbeddedSQL
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public @interface IntegrationTest {
 }
