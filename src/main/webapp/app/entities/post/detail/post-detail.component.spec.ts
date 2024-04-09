@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { DataUtils } from 'app/core/util/data-util.service';
@@ -14,7 +14,7 @@ describe('Post Management Detail Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PostDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [PostDetailComponent],
       providers: [
         provideRouter(
           [
@@ -45,7 +45,7 @@ describe('Post Management Detail Component', () => {
       const instance = await harness.navigateByUrl('/', PostDetailComponent);
 
       // THEN
-      expect(instance.post).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.post()).toEqual(expect.objectContaining({ id: 123 }));
     });
   });
 

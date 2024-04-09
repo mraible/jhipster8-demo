@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { BlogDetailComponent } from './blog-detail.component';
@@ -11,7 +11,7 @@ describe('Blog Management Detail Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BlogDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
+      imports: [BlogDetailComponent],
       providers: [
         provideRouter(
           [
@@ -40,7 +40,7 @@ describe('Blog Management Detail Component', () => {
       const instance = await harness.navigateByUrl('/', BlogDetailComponent);
 
       // THEN
-      expect(instance.blog).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.blog()).toEqual(expect.objectContaining({ id: 123 }));
     });
   });
 

@@ -10,13 +10,13 @@
 
         @if (editForm.controls.id.value !== null) {
           <div class="mb-3">
-            <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+            <label class="form-label" for="field_id" jhiTranslate="blogApp.blog.id">ID</label>
             <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
           </div>
         }
 
         <div class="mb-3">
-          <label class="form-label" jhiTranslate="blogApp.blog.name" for="field_name">Name</label>
+          <label class="form-label" for="field_name" jhiTranslate="blogApp.blog.name">Name</label>
           <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
           @if (editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)) {
             <div>
@@ -24,7 +24,7 @@
                 <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
               }
               @if (editForm.get('name')?.errors?.minlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: 3 }"
+                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '3' }"
                   >This field is required to be at least 3 characters.</small
                 >
               }
@@ -33,7 +33,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" jhiTranslate="blogApp.blog.handle" for="field_handle">Handle</label>
+          <label class="form-label" for="field_handle" jhiTranslate="blogApp.blog.handle">Handle</label>
           <input type="text" class="form-control" name="handle" id="field_handle" data-cy="handle" formControlName="handle" />
           @if (editForm.get('handle')!.invalid && (editForm.get('handle')!.dirty || editForm.get('handle')!.touched)) {
             <div>
@@ -41,7 +41,7 @@
                 <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
               }
               @if (editForm.get('handle')?.errors?.minlength) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: 2 }"
+                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
                   >This field is required to be at least 2 characters.</small
                 >
               }
@@ -50,7 +50,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" jhiTranslate="blogApp.blog.user" for="field_user">User</label>
+          <label class="form-label" for="field_user" jhiTranslate="blogApp.blog.user">User</label>
           <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
             <option [ngValue]="null"></option>
             @for (userOption of usersSharedCollection; track $index) {

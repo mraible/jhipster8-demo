@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import SharedModule from 'app/shared/shared.module';
@@ -13,7 +13,7 @@ import { IPost } from '../post.model';
   imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
 })
 export class PostDetailComponent {
-  @Input() post: IPost | null = null;
+  post = input<IPost | null>(null);
 
   protected dataUtils = inject(DataUtils);
 
