@@ -36,7 +36,7 @@
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
         <run.addResources>false</run.addResources>
         <spring-boot.version>${project.parent.version}</spring-boot.version>
-        <archunit-junit5.version>1.2.1</archunit-junit5.version>
+        <archunit-junit5.version>1.3.0</archunit-junit5.version>
         <checkstyle.version>10.15.0</checkstyle.version>
         <checksum-maven-plugin.version>1.11</checksum-maven-plugin.version>
         <frontend-maven-plugin.version>1.15.0</frontend-maven-plugin.version>
