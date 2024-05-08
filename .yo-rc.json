@@ -3,12 +3,6 @@
     "applicationType": "monolith",
     "authenticationType": "jwt",
     "baseName": "blog",
-    "blueprints": [
-      {
-        "name": "generator-jhipster-migrate",
-        "version": "1.0.0"
-      }
-    ],
     "buildTool": "maven",
     "cacheProvider": "ehcache",
     "clientFramework": "angular",
