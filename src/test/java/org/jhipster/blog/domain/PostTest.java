@@ -27,7 +27,7 @@ class PostTest {
     }
 
     @Test
-    void blogTest() throws Exception {
+    void blogTest() {
         Post post = getPostRandomSampleGenerator();
         Blog blogBack = getBlogRandomSampleGenerator();
 
@@ -39,7 +39,7 @@ class PostTest {
     }
 
     @Test
-    void tagTest() throws Exception {
+    void tagTest() {
         Post post = getPostRandomSampleGenerator();
         Tag tagBack = getTagRandomSampleGenerator();
 
