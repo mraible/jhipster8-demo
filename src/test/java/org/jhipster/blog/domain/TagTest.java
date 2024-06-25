@@ -26,7 +26,7 @@ class TagTest {
     }
 
     @Test
-    void postTest() throws Exception {
+    void postTest() {
         Tag tag = getTagRandomSampleGenerator();
         Post postBack = getPostRandomSampleGenerator();
 

@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient, HttpResponse } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject, from } from 'rxjs';
@@ -26,8 +25,9 @@ describe('Post Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, PostUpdateComponent],
+      imports: [PostUpdateComponent],
       providers: [
+        provideHttpClient(),
         FormBuilder,
         {
           provide: ActivatedRoute,
@@ -53,10 +53,10 @@ describe('Post Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Blog query and add missing value', () => {
       const post: IPost = { id: 456 };
-      const blog: IBlog = { id: 16058 };
+      const blog: IBlog = { id: 13869 };
       post.blog = blog;
 
-      const blogCollection: IBlog[] = [{ id: 30850 }];
+      const blogCollection: IBlog[] = [{ id: 31519 }];
       jest.spyOn(blogService, 'query').mockReturnValue(of(new HttpResponse({ body: blogCollection })));
       const additionalBlogs = [blog];
       const expectedCollection: IBlog[] = [...additionalBlogs, ...blogCollection];
@@ -75,10 +75,10 @@ describe('Post Management Update Component', () => {
 
     it('Should call Tag query and add missing value', () => {
       const post: IPost = { id: 456 };
-      const tags: ITag[] = [{ id: 2805 }];
+      const tags: ITag[] = [{ id: 24275 }];
       post.tags = tags;
 
-      const tagCollection: ITag[] = [{ id: 32266 }];
+      const tagCollection: ITag[] = [{ id: 1426 }];
       jest.spyOn(tagService, 'query').mockReturnValue(of(new HttpResponse({ body: tagCollection })));
       const additionalTags = [...tags];
       const expectedCollection: ITag[] = [...additionalTags, ...tagCollection];
@@ -94,9 +94,9 @@ describe('Post Management Update Component', () => {
 
     it('Should update editForm', () => {
       const post: IPost = { id: 456 };
-      const blog: IBlog = { id: 2733 };
+      const blog: IBlog = { id: 14794 };
       post.blog = blog;
-      const tag: ITag = { id: 8519 };
+      const tag: ITag = { id: 26695 };
       post.tags = [tag];
 
       activatedRoute.data = of({ post });

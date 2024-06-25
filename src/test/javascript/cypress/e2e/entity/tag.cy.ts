@@ -15,7 +15,7 @@ describe('Tag e2e test', () => {
   const tagPageUrlPattern = new RegExp('/tag(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const tagSample = { name: 'catalogue formulate' };
+  const tagSample = { name: 'ew during furthermore' };
 
   let tag;
 
@@ -44,7 +44,7 @@ describe('Tag e2e test', () => {
     cy.visit('/');
     cy.clickOnEntityMenuItem('tag');
     cy.wait('@entitiesRequest').then(({ response }) => {
-      if (response.body.length === 0) {
+      if (response?.body.length === 0) {
         cy.get(entityTableSelector).should('not.exist');
       } else {
         cy.get(entityTableSelector).should('exist');
@@ -68,7 +68,7 @@ describe('Tag e2e test', () => {
         cy.get(entityCreateSaveButtonSelector).should('exist');
         cy.get(entityCreateCancelButtonSelector).click();
         cy.wait('@entitiesRequest').then(({ response }) => {
-          expect(response.statusCode).to.equal(200);
+          expect(response?.statusCode).to.equal(200);
         });
         cy.url().should('match', tagPageUrlPattern);
       });
@@ -109,7 +109,7 @@ describe('Tag e2e test', () => {
         cy.getEntityDetailsHeading('tag');
         cy.get(entityDetailsBackButtonSelector).click();
         cy.wait('@entitiesRequest').then(({ response }) => {
-          expect(response.statusCode).to.equal(200);
+          expect(response?.statusCode).to.equal(200);
         });
         cy.url().should('match', tagPageUrlPattern);
       });
@@ -120,7 +120,7 @@ describe('Tag e2e test', () => {
         cy.get(entityCreateSaveButtonSelector).should('exist');
         cy.get(entityCreateCancelButtonSelector).click();
         cy.wait('@entitiesRequest').then(({ response }) => {
-          expect(response.statusCode).to.equal(200);
+          expect(response?.statusCode).to.equal(200);
         });
         cy.url().should('match', tagPageUrlPattern);
       });
@@ -130,7 +130,7 @@ describe('Tag e2e test', () => {
         cy.getEntityCreateUpdateHeading('Tag');
         cy.get(entityCreateSaveButtonSelector).click();
         cy.wait('@entitiesRequest').then(({ response }) => {
-          expect(response.statusCode).to.equal(200);
+          expect(response?.statusCode).to.equal(200);
         });
         cy.url().should('match', tagPageUrlPattern);
       });
@@ -140,10 +140,10 @@ describe('Tag e2e test', () => {
         cy.getEntityDeleteDialogHeading('tag').should('exist');
         cy.get(entityConfirmDeleteButtonSelector).click();
         cy.wait('@deleteEntityRequest').then(({ response }) => {
-          expect(response.statusCode).to.equal(204);
+          expect(response?.statusCode).to.equal(204);
         });
         cy.wait('@entitiesRequest').then(({ response }) => {
-          expect(response.statusCode).to.equal(200);
+          expect(response?.statusCode).to.equal(200);
         });
         cy.url().should('match', tagPageUrlPattern);
 
@@ -160,17 +160,17 @@ describe('Tag e2e test', () => {
     });
 
     it('should create an instance of Tag', () => {
-      cy.get(`[data-cy="name"]`).type('vector review phew');
-      cy.get(`[data-cy="name"]`).should('have.value', 'vector review phew');
+      cy.get(`[data-cy="name"]`).type('oof yawningly');
+      cy.get(`[data-cy="name"]`).should('have.value', 'oof yawningly');
 
       cy.get(entityCreateSaveButtonSelector).click();
 
       cy.wait('@postEntityRequest').then(({ response }) => {
-        expect(response.statusCode).to.equal(201);
+        expect(response?.statusCode).to.equal(201);
         tag = response.body;
       });
       cy.wait('@entitiesRequest').then(({ response }) => {
-        expect(response.statusCode).to.equal(200);
+        expect(response?.statusCode).to.equal(200);
       });
       cy.url().should('match', tagPageUrlPattern);
     });

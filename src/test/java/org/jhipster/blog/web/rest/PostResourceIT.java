@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.jhipster.blog.IntegrationTest;
 import org.jhipster.blog.domain.Post;
 import org.jhipster.blog.repository.PostRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,6 +74,8 @@ class PostResourceIT {
 
     private Post post;
 
+    private Post insertedPost;
+
     /**
      * Create an entity for this test.
      *
@@ -100,6 +103,14 @@ class PostResourceIT {
         post = createEntity(em);
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (insertedPost != null) {
+            postRepository.delete(insertedPost);
+            insertedPost = null;
+        }
+    }
+
     @Test
     @Transactional
     void createPost() throws Exception {
@@ -118,6 +129,8 @@ class PostResourceIT {
         // Validate the Post in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertPostUpdatableFieldsEquals(returnedPost, getPersistedPost(returnedPost));
+
+        insertedPost = returnedPost;
     }
 
     @Test
@@ -173,7 +186,7 @@ class PostResourceIT {
     @Transactional
     void getAllPosts() throws Exception {
         // Initialize the database
-        postRepository.saveAndFlush(post);
+        insertedPost = postRepository.saveAndFlush(post);
 
         // Get all the postList
         restPostMockMvc
@@ -207,7 +220,7 @@ class PostResourceIT {
     @Transactional
     void getPost() throws Exception {
         // Initialize the database
-        postRepository.saveAndFlush(post);
+        insertedPost = postRepository.saveAndFlush(post);
 
         // Get the post
         restPostMockMvc
@@ -231,7 +244,7 @@ class PostResourceIT {
     @Transactional
     void putExistingPost() throws Exception {
         // Initialize the database
-        postRepository.saveAndFlush(post);
+        insertedPost = postRepository.saveAndFlush(post);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -307,7 +320,7 @@ class PostResourceIT {
     @Transactional
     void partialUpdatePostWithPatch() throws Exception {
         // Initialize the database
-        postRepository.saveAndFlush(post);
+        insertedPost = postRepository.saveAndFlush(post);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -315,7 +328,7 @@ class PostResourceIT {
         Post partialUpdatedPost = new Post();
         partialUpdatedPost.setId(post.getId());
 
-        partialUpdatedPost.content(UPDATED_CONTENT);
+        partialUpdatedPost.title(UPDATED_TITLE).content(UPDATED_CONTENT);
 
         restPostMockMvc
             .perform(
@@ -335,7 +348,7 @@ class PostResourceIT {
     @Transactional
     void fullUpdatePostWithPatch() throws Exception {
         // Initialize the database
-        postRepository.saveAndFlush(post);
+        insertedPost = postRepository.saveAndFlush(post);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -412,7 +425,7 @@ class PostResourceIT {
     @Transactional
     void deletePost() throws Exception {
         // Initialize the database
-        postRepository.saveAndFlush(post);
+        insertedPost = postRepository.saveAndFlush(post);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
 

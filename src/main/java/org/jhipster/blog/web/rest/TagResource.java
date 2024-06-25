@@ -32,7 +32,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @Transactional
 public class TagResource {
 
-    private final Logger log = LoggerFactory.getLogger(TagResource.class);
+    private static final Logger log = LoggerFactory.getLogger(TagResource.class);
 
     private static final String ENTITY_NAME = "tag";
 

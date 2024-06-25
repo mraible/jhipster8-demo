@@ -13,7 +13,7 @@ import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { DataUtils } from 'app/core/util/data-util.service';
 import { ParseLinks } from 'app/core/util/parse-links.service';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { PostDeleteDialogComponent } from '../delete/post-delete-dialog.component';
 import { EntityArrayResponseType, PostService } from '../service/post.service';
 import { IPost } from '../post.model';
@@ -31,7 +31,7 @@ import { IPost } from '../post.model';
     DurationPipe,
     FormatMediumDatetimePipe,
     FormatMediumDatePipe,
-    InfiniteScrollModule,
+    InfiniteScrollDirective,
   ],
 })
 export class PostComponent implements OnInit {

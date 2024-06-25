@@ -1,22 +1,22 @@
 import { ITag, NewTag } from './tag.model';
 
 export const sampleWithRequiredData: ITag = {
-  id: 21000,
-  name: 'weakly',
+  id: 31136,
+  name: 'fast airfield',
 };
 
 export const sampleWithPartialData: ITag = {
-  id: 22743,
-  name: 'um publicise to',
+  id: 24921,
+  name: 'how',
 };
 
 export const sampleWithFullData: ITag = {
-  id: 28120,
-  name: 'heckle rumour latency',
+  id: 4471,
+  name: 'mid tensely',
 };
 
 export const sampleWithNewData: NewTag = {
-  name: 'collide fooey psst',
+  name: 'meh corrupt',
   id: null,
 };
 

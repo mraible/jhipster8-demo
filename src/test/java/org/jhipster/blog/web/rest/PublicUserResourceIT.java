@@ -1,18 +1,23 @@
 package org.jhipster.blog.web.rest;
 
-import static org.hamcrest.Matchers.hasItem;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import jakarta.persistence.EntityManager;
+import java.util.Objects;
+import java.util.Set;
 import org.jhipster.blog.IntegrationTest;
 import org.jhipster.blog.domain.User;
 import org.jhipster.blog.repository.UserRepository;
 import org.jhipster.blog.security.AuthoritiesConstants;
+import org.jhipster.blog.service.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -33,6 +38,9 @@ class PublicUserResourceIT {
     private UserRepository userRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private EntityManager em;
 
     @Autowired
@@ -42,16 +50,29 @@ class PublicUserResourceIT {
     private MockMvc restUserMockMvc;
 
     private User user;
+    private Long numberOfUsers;
 
     @BeforeEach
-    public void setup() {
-        cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).clear();
-        cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE).clear();
+    public void countUsers() {
+        numberOfUsers = userRepository.count();
     }
 
     @BeforeEach
     public void initTest() {
-        user = UserResourceIT.initTestUser(userRepository, em);
+        user = UserResourceIT.initTestUser(em);
+    }
+
+    @AfterEach
+    public void cleanupAndCheck() {
+        cacheManager
+            .getCacheNames()
+            .stream()
+            .map(cacheName -> this.cacheManager.getCache(cacheName))
+            .filter(Objects::nonNull)
+            .forEach(Cache::clear);
+        userService.deleteUser(user.getLogin());
+        assertThat(userRepository.count()).isEqualTo(numberOfUsers);
+        numberOfUsers = null;
     }
 
     @Test
@@ -65,10 +86,11 @@ class PublicUserResourceIT {
             .perform(get("/api/users?sort=id,desc").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].login").value(hasItem(DEFAULT_LOGIN)))
-            .andExpect(jsonPath("$.[*].email").doesNotExist())
-            .andExpect(jsonPath("$.[*].imageUrl").doesNotExist())
-            .andExpect(jsonPath("$.[*].langKey").doesNotExist());
+            .andExpect(jsonPath("$.[?(@.id == %d)].login", user.getId()).value(user.getLogin()))
+            .andExpect(jsonPath("$.[?(@.id == %d)].keys()", user.getId()).value(Set.of("id", "login")))
+            .andExpect(jsonPath("$.[*].email").doesNotHaveJsonPath())
+            .andExpect(jsonPath("$.[*].imageUrl").doesNotHaveJsonPath())
+            .andExpect(jsonPath("$.[*].langKey").doesNotHaveJsonPath());
     }
 
     @Test
