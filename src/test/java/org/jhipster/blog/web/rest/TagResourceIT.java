@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.jhipster.blog.IntegrationTest;
 import org.jhipster.blog.domain.Tag;
 import org.jhipster.blog.repository.TagRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,8 @@ class TagResourceIT {
 
     private Tag tag;
 
+    private Tag insertedTag;
+
     /**
      * Create an entity for this test.
      *
@@ -81,6 +84,14 @@ class TagResourceIT {
         tag = createEntity(em);
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (insertedTag != null) {
+            tagRepository.delete(insertedTag);
+            insertedTag = null;
+        }
+    }
+
     @Test
     @Transactional
     void createTag() throws Exception {
@@ -99,6 +110,8 @@ class TagResourceIT {
         // Validate the Tag in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertTagUpdatableFieldsEquals(returnedTag, getPersistedTag(returnedTag));
+
+        insertedTag = returnedTag;
     }
 
     @Test
@@ -138,7 +151,7 @@ class TagResourceIT {
     @Transactional
     void getAllTags() throws Exception {
         // Initialize the database
-        tagRepository.saveAndFlush(tag);
+        insertedTag = tagRepository.saveAndFlush(tag);
 
         // Get all the tagList
         restTagMockMvc
@@ -153,7 +166,7 @@ class TagResourceIT {
     @Transactional
     void getTag() throws Exception {
         // Initialize the database
-        tagRepository.saveAndFlush(tag);
+        insertedTag = tagRepository.saveAndFlush(tag);
 
         // Get the tag
         restTagMockMvc
@@ -175,7 +188,7 @@ class TagResourceIT {
     @Transactional
     void putExistingTag() throws Exception {
         // Initialize the database
-        tagRepository.saveAndFlush(tag);
+        insertedTag = tagRepository.saveAndFlush(tag);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -249,7 +262,7 @@ class TagResourceIT {
     @Transactional
     void partialUpdateTagWithPatch() throws Exception {
         // Initialize the database
-        tagRepository.saveAndFlush(tag);
+        insertedTag = tagRepository.saveAndFlush(tag);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -277,7 +290,7 @@ class TagResourceIT {
     @Transactional
     void fullUpdateTagWithPatch() throws Exception {
         // Initialize the database
-        tagRepository.saveAndFlush(tag);
+        insertedTag = tagRepository.saveAndFlush(tag);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -354,7 +367,7 @@ class TagResourceIT {
     @Transactional
     void deleteTag() throws Exception {
         // Initialize the database
-        tagRepository.saveAndFlush(tag);
+        insertedTag = tagRepository.saveAndFlush(tag);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
 

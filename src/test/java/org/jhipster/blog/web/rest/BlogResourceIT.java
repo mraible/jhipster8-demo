@@ -20,6 +20,7 @@ import org.jhipster.blog.domain.Blog;
 import org.jhipster.blog.domain.User;
 import org.jhipster.blog.repository.BlogRepository;
 import org.jhipster.blog.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,6 +62,9 @@ class BlogResourceIT {
     @Autowired
     private BlogRepository blogRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Mock
     private BlogRepository blogRepositoryMock;
 
@@ -68,12 +72,11 @@ class BlogResourceIT {
     private EntityManager em;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private MockMvc restBlogMockMvc;
 
     private Blog blog;
+
+    private Blog insertedBlog;
 
     /**
      * Create an entity for this test.
@@ -112,6 +115,14 @@ class BlogResourceIT {
         blog = createEntity(em);
     }
 
+    @AfterEach
+    public void cleanup() {
+        if (insertedBlog != null) {
+            blogRepository.delete(insertedBlog);
+            insertedBlog = null;
+        }
+    }
+
     @Test
     @Transactional
     void createBlog() throws Exception {
@@ -130,6 +141,8 @@ class BlogResourceIT {
         // Validate the Blog in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertBlogUpdatableFieldsEquals(returnedBlog, getPersistedBlog(returnedBlog));
+
+        insertedBlog = returnedBlog;
     }
 
     @Test
@@ -185,7 +198,7 @@ class BlogResourceIT {
     @Transactional
     void getAllBlogs() throws Exception {
         // Initialize the database
-        blogRepository.saveAndFlush(blog);
+        insertedBlog = blogRepository.saveAndFlush(blog);
 
         // Get all the blogList
         restBlogMockMvc
@@ -218,7 +231,7 @@ class BlogResourceIT {
     @Transactional
     void getBlog() throws Exception {
         // Initialize the database
-        blogRepository.saveAndFlush(blog);
+        insertedBlog = blogRepository.saveAndFlush(blog);
 
         // Get the blog
         restBlogMockMvc
@@ -241,7 +254,7 @@ class BlogResourceIT {
     @Transactional
     void putExistingBlog() throws Exception {
         // Initialize the database
-        blogRepository.saveAndFlush(blog);
+        insertedBlog = blogRepository.saveAndFlush(blog);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -317,13 +330,15 @@ class BlogResourceIT {
     @Transactional
     void partialUpdateBlogWithPatch() throws Exception {
         // Initialize the database
-        blogRepository.saveAndFlush(blog);
+        insertedBlog = blogRepository.saveAndFlush(blog);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the blog using partial update
         Blog partialUpdatedBlog = new Blog();
         partialUpdatedBlog.setId(blog.getId());
+
+        partialUpdatedBlog.name(UPDATED_NAME).handle(UPDATED_HANDLE);
 
         restBlogMockMvc
             .perform(
@@ -342,7 +357,7 @@ class BlogResourceIT {
     @Transactional
     void fullUpdateBlogWithPatch() throws Exception {
         // Initialize the database
-        blogRepository.saveAndFlush(blog);
+        insertedBlog = blogRepository.saveAndFlush(blog);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
@@ -418,7 +433,7 @@ class BlogResourceIT {
     @Transactional
     void deleteBlog() throws Exception {
         // Initialize the database
-        blogRepository.saveAndFlush(blog);
+        insertedBlog = blogRepository.saveAndFlush(blog);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
 

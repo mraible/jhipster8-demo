@@ -30,7 +30,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @Transactional
 public class BlogResource {
 
-    private final Logger log = LoggerFactory.getLogger(BlogResource.class);
+    private static final Logger log = LoggerFactory.getLogger(BlogResource.class);
 
     private static final String ENTITY_NAME = "blog";
 
