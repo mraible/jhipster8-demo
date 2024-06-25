@@ -182,7 +182,7 @@ Start your backend without compiling frontend:
 
     npm run backend:start
 
-Start your Cypress end to end testing:
+Start your Cypress end-to-end testing:
 
     npm run e2e:cypress:coverage
 
