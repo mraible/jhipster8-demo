@@ -17,7 +17,7 @@ describe('Tag Management Detail Component', () => {
           [
             {
               path: '**',
-              component: TagDetailComponent,
+              loadComponent: () => import('./tag-detail.component').then(m => m.TagDetailComponent),
               resolve: { tag: () => of({ id: 123 }) },
             },
           ],

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import SharedModule from 'app/shared/shared.module';
 
@@ -16,8 +16,8 @@ export default class PasswordResetInitComponent implements AfterViewInit {
   success = signal(false);
   resetRequestForm;
 
-  private passwordResetInitService = inject(PasswordResetInitService);
-  private fb = inject(FormBuilder);
+  private readonly passwordResetInitService = inject(PasswordResetInitService);
+  private readonly fb = inject(FormBuilder);
 
   constructor() {
     this.resetRequestForm = this.fb.group({

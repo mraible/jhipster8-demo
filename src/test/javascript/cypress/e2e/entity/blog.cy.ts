@@ -1,13 +1,13 @@
 import {
-  entityTableSelector,
-  entityDetailsButtonSelector,
-  entityDetailsBackButtonSelector,
-  entityCreateButtonSelector,
-  entityCreateSaveButtonSelector,
-  entityCreateCancelButtonSelector,
-  entityEditButtonSelector,
-  entityDeleteButtonSelector,
   entityConfirmDeleteButtonSelector,
+  entityCreateButtonSelector,
+  entityCreateCancelButtonSelector,
+  entityCreateSaveButtonSelector,
+  entityDeleteButtonSelector,
+  entityDetailsBackButtonSelector,
+  entityDetailsButtonSelector,
+  entityEditButtonSelector,
+  entityTableSelector,
 } from '../../support/entity';
 
 describe('Blog e2e test', () => {
@@ -15,7 +15,7 @@ describe('Blog e2e test', () => {
   const blogPageUrlPattern = new RegExp('/blog(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const blogSample = { name: 'punctually plush whenever', handle: 'behind' };
+  const blogSample = { name: 'towards', handle: 'besides experience packaging' };
 
   let blog;
 
@@ -157,11 +157,11 @@ describe('Blog e2e test', () => {
     });
 
     it('should create an instance of Blog', () => {
-      cy.get(`[data-cy="name"]`).type('officially abnormally');
-      cy.get(`[data-cy="name"]`).should('have.value', 'officially abnormally');
+      cy.get(`[data-cy="name"]`).type('total justly sleepily');
+      cy.get(`[data-cy="name"]`).should('have.value', 'total justly sleepily');
 
-      cy.get(`[data-cy="handle"]`).type('wrongly');
-      cy.get(`[data-cy="handle"]`).should('have.value', 'wrongly');
+      cy.get(`[data-cy="handle"]`).type('with recent');
+      cy.get(`[data-cy="handle"]`).should('have.value', 'with recent');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

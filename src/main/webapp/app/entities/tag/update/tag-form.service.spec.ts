@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { sampleWithRequiredData, sampleWithNewData } from '../tag.test-samples';
+import { sampleWithNewData, sampleWithRequiredData } from '../tag.test-samples';
 
 import { TagFormService } from './tag-form.service';
 

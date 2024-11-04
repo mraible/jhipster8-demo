@@ -82,9 +82,8 @@ class PostResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Post createEntity(EntityManager em) {
-        Post post = new Post().title(DEFAULT_TITLE).content(DEFAULT_CONTENT).date(DEFAULT_DATE);
-        return post;
+    public static Post createEntity() {
+        return new Post().title(DEFAULT_TITLE).content(DEFAULT_CONTENT).date(DEFAULT_DATE);
     }
 
     /**
@@ -93,14 +92,13 @@ class PostResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Post createUpdatedEntity(EntityManager em) {
-        Post post = new Post().title(UPDATED_TITLE).content(UPDATED_CONTENT).date(UPDATED_DATE);
-        return post;
+    public static Post createUpdatedEntity() {
+        return new Post().title(UPDATED_TITLE).content(UPDATED_CONTENT).date(UPDATED_DATE);
     }
 
     @BeforeEach
     public void initTest() {
-        post = createEntity(em);
+        post = createEntity();
     }
 
     @AfterEach
@@ -328,7 +326,7 @@ class PostResourceIT {
         Post partialUpdatedPost = new Post();
         partialUpdatedPost.setId(post.getId());
 
-        partialUpdatedPost.title(UPDATED_TITLE).content(UPDATED_CONTENT);
+        partialUpdatedPost.title(UPDATED_TITLE);
 
         restPostMockMvc
             .perform(

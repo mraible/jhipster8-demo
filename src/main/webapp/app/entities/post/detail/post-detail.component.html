@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    @if (post()) {
+    @if (post(); as postRef) {
       <div>
         <h2 data-cy="postDetailsHeading"><span jhiTranslate="blogApp.post.detail.title">Post</span></h2>
 
@@ -13,31 +13,31 @@
         <dl class="row-md jh-entity-details">
           <dt><span jhiTranslate="global.field.id">ID</span></dt>
           <dd>
-            <span>{{ post()!.id }}</span>
+            <span>{{ postRef.id }}</span>
           </dd>
           <dt><span jhiTranslate="blogApp.post.title">Title</span></dt>
           <dd>
-            <span>{{ post()!.title }}</span>
+            <span>{{ postRef.title }}</span>
           </dd>
           <dt><span jhiTranslate="blogApp.post.content">Content</span></dt>
           <dd>
-            <span>{{ post()!.content }}</span>
+            <span>{{ postRef.content }}</span>
           </dd>
           <dt><span jhiTranslate="blogApp.post.date">Date</span></dt>
           <dd>
-            <span>{{ post()!.date | formatMediumDatetime }}</span>
+            <span>{{ postRef.date | formatMediumDatetime }}</span>
           </dd>
           <dt><span jhiTranslate="blogApp.post.blog">Blog</span></dt>
           <dd>
             @if (post()!.blog) {
               <div>
-                <a [routerLink]="['/blog', post()!.blog?.id, 'view']">{{ post()!.blog?.name }}</a>
+                <a [routerLink]="['/blog', post()!.blog?.id, 'view']">{{ postRef.blog?.name }}</a>
               </div>
             }
           </dd>
           <dt><span jhiTranslate="blogApp.post.tag">Tag</span></dt>
           <dd>
-            @for (tag of post()!.tags; track $index; let last = $last) {
+            @for (tag of postRef.tags; track $index; let last = $last) {
               <span>
                 <a [routerLink]="['/tag', tag.id, 'view']">{{ tag?.name }}</a
                 >{{ last ? '' : ', ' }}
@@ -50,7 +50,7 @@
           <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
         </button>
 
-        <button type="button" [routerLink]="['/post', post()!.id, 'edit']" class="btn btn-primary">
+        <button type="button" [routerLink]="['/post', postRef.id, 'edit']" class="btn btn-primary">
           <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
         </button>
       </div>

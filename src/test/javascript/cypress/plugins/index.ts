@@ -37,7 +37,9 @@ export default async (on: Cypress.PluginEvents, config: Cypress.PluginConfigOpti
   on('task', {
     lighthouse: lighthouse(async lighthouseReport => {
       const { default: ReportGenerator } = await import('lighthouse/report/generator/report-generator');
-      !existsSync('target/cypress/') && mkdirSync('target/cypress/', { recursive: true });
+      if (!existsSync('target/cypress/')) {
+        mkdirSync('target/cypress/', { recursive: true });
+      }
       writeFileSync('target/cypress/lhreport.html', ReportGenerator.generateReport(lighthouseReport.lhr, 'html'));
     }),
     pa11y: pa11y(),

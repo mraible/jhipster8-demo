@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient, HttpResponse } from '@angular/common/http';
+import { HttpResponse, provideHttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { of, Subject, from } from 'rxjs';
+import { Subject, from, of } from 'rxjs';
 
 import { IPost } from 'app/entities/post/post.model';
 import { PostService } from 'app/entities/post/service/post.service';
@@ -49,10 +49,10 @@ describe('Tag Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Post query and add missing value', () => {
       const tag: ITag = { id: 456 };
-      const posts: IPost[] = [{ id: 23669 }];
+      const posts: IPost[] = [{ id: 14276 }];
       tag.posts = posts;
 
-      const postCollection: IPost[] = [{ id: 8463 }];
+      const postCollection: IPost[] = [{ id: 3442 }];
       jest.spyOn(postService, 'query').mockReturnValue(of(new HttpResponse({ body: postCollection })));
       const additionalPosts = [...posts];
       const expectedCollection: IPost[] = [...additionalPosts, ...postCollection];
@@ -71,7 +71,7 @@ describe('Tag Management Update Component', () => {
 
     it('Should update editForm', () => {
       const tag: ITag = { id: 456 };
-      const post: IPost = { id: 8902 };
+      const post: IPost = { id: 8440 };
       tag.posts = [post];
 
       activatedRoute.data = of({ tag });

@@ -81,9 +81,8 @@ class BlogResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Blog createEntity(EntityManager em) {
-        Blog blog = new Blog().name(DEFAULT_NAME).handle(DEFAULT_HANDLE);
-        return blog;
+    public static Blog createEntity() {
+        return new Blog().name(DEFAULT_NAME).handle(DEFAULT_HANDLE);
     }
 
     /**
@@ -92,14 +91,13 @@ class BlogResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Blog createUpdatedEntity(EntityManager em) {
-        Blog blog = new Blog().name(UPDATED_NAME).handle(UPDATED_HANDLE);
-        return blog;
+    public static Blog createUpdatedEntity() {
+        return new Blog().name(UPDATED_NAME).handle(UPDATED_HANDLE);
     }
 
     @BeforeEach
     public void initTest() {
-        blog = createEntity(em);
+        blog = createEntity();
     }
 
     @AfterEach
@@ -325,7 +323,7 @@ class BlogResourceIT {
         Blog partialUpdatedBlog = new Blog();
         partialUpdatedBlog.setId(blog.getId());
 
-        partialUpdatedBlog.name(UPDATED_NAME).handle(UPDATED_HANDLE);
+        partialUpdatedBlog.name(UPDATED_NAME);
 
         restBlogMockMvc
             .perform(

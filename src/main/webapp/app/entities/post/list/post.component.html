@@ -73,7 +73,7 @@
           </tr>
         </thead>
         <tbody infinite-scroll (scrolled)="loadNextPage()" [infiniteScrollDisabled]="!hasMorePage()" [infiniteScrollDistance]="0">
-          @for (post of posts; track trackId) {
+          @for (post of posts; track trackId(post)) {
             <tr data-cy="entityTable">
               <td>
                 <a [routerLink]="['/post', post.id, 'view']">{{ post.id }}</a>
