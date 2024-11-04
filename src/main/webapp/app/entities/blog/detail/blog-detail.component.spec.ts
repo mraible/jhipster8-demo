@@ -17,7 +17,7 @@ describe('Blog Management Detail Component', () => {
           [
             {
               path: '**',
-              component: BlogDetailComponent,
+              loadComponent: () => import('./blog-detail.component').then(m => m.BlogDetailComponent),
               resolve: { blog: () => of({ id: 123 }) },
             },
           ],

@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    @if (blog()) {
+    @if (blog(); as blogRef) {
       <div>
         <h2 data-cy="blogDetailsHeading"><span jhiTranslate="blogApp.blog.detail.title">Blog</span></h2>
 
@@ -13,19 +13,19 @@
         <dl class="row-md jh-entity-details">
           <dt><span jhiTranslate="global.field.id">ID</span></dt>
           <dd>
-            <span>{{ blog()!.id }}</span>
+            <span>{{ blogRef.id }}</span>
           </dd>
           <dt><span jhiTranslate="blogApp.blog.name">Name</span></dt>
           <dd>
-            <span>{{ blog()!.name }}</span>
+            <span>{{ blogRef.name }}</span>
           </dd>
           <dt><span jhiTranslate="blogApp.blog.handle">Handle</span></dt>
           <dd>
-            <span>{{ blog()!.handle }}</span>
+            <span>{{ blogRef.handle }}</span>
           </dd>
           <dt><span jhiTranslate="blogApp.blog.user">User</span></dt>
           <dd>
-            <span>{{ blog()!.user?.login }}</span>
+            <span>{{ blogRef.user?.login }}</span>
           </dd>
         </dl>
 
@@ -33,7 +33,7 @@
           <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
         </button>
 
-        <button type="button" [routerLink]="['/blog', blog()!.id, 'edit']" class="btn btn-primary">
+        <button type="button" [routerLink]="['/blog', blogRef.id, 'edit']" class="btn btn-primary">
           <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
         </button>
       </div>

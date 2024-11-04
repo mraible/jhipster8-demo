@@ -1,8 +1,8 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import SharedModule from 'app/shared/shared.module';
-import { FormsModule } from '@angular/forms';
-import { SortDirective, SortByDirective, sortStateSignal, SortService } from 'app/shared/sort';
+import { SortByDirective, SortDirective, SortService, sortStateSignal } from 'app/shared/sort';
 import { ConfigurationService } from './configuration.service';
 import { Bean, PropertySource } from './configuration.model';
 
@@ -31,8 +31,8 @@ export default class ConfigurationComponent implements OnInit {
     return data;
   });
 
-  private sortService = inject(SortService);
-  private configurationService = inject(ConfigurationService);
+  private readonly sortService = inject(SortService);
+  private readonly configurationService = inject(ConfigurationService);
 
   ngOnInit(): void {
     this.configurationService.getBeans().subscribe(beans => {

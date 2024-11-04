@@ -30,7 +30,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @Transactional
 public class BlogResource {
 
-    private static final Logger log = LoggerFactory.getLogger(BlogResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BlogResource.class);
 
     private static final String ENTITY_NAME = "blog";
 
@@ -52,7 +52,7 @@ public class BlogResource {
      */
     @PostMapping("")
     public ResponseEntity<Blog> createBlog(@Valid @RequestBody Blog blog) throws URISyntaxException {
-        log.debug("REST request to save Blog : {}", blog);
+        LOG.debug("REST request to save Blog : {}", blog);
         if (blog.getId() != null) {
             throw new BadRequestAlertException("A new blog cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -79,7 +79,7 @@ public class BlogResource {
     @PutMapping("/{id}")
     public ResponseEntity<Blog> updateBlog(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Blog blog)
         throws URISyntaxException {
-        log.debug("REST request to update Blog : {}, {}", id, blog);
+        LOG.debug("REST request to update Blog : {}, {}", id, blog);
         if (blog.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -115,7 +115,7 @@ public class BlogResource {
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Blog blog
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Blog partially : {}, {}", id, blog);
+        LOG.debug("REST request to partial update Blog partially : {}, {}", id, blog);
         if (blog.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -157,7 +157,7 @@ public class BlogResource {
      */
     @GetMapping("")
     public List<Blog> getAllBlogs(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
-        log.debug("REST request to get all Blogs");
+        LOG.debug("REST request to get all Blogs");
         if (eagerload) {
             return blogRepository.findAllWithEagerRelationships();
         } else {
@@ -173,7 +173,7 @@ public class BlogResource {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Blog> getBlog(@PathVariable("id") Long id) {
-        log.debug("REST request to get Blog : {}", id);
+        LOG.debug("REST request to get Blog : {}", id);
         Optional<Blog> blog = blogRepository.findOneWithEagerRelationships(id);
         if (blog.isPresent()) {
             blog
@@ -191,7 +191,7 @@ public class BlogResource {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBlog(@PathVariable("id") Long id) {
-        log.debug("REST request to delete Blog : {}", id);
+        LOG.debug("REST request to delete Blog : {}", id);
         Optional<Blog> blog = blogRepository.findById(id);
         blog
             .filter(b -> b.getUser() != null && b.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse("")))

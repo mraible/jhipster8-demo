@@ -1,5 +1,5 @@
-import { convertToParamMap, ParamMap, Params } from '@angular/router';
-import { FilterOptions, FilterOption } from './filter.model';
+import { ParamMap, Params, convertToParamMap } from '@angular/router';
+import { FilterOption, FilterOptions } from './filter.model';
 
 describe('FilterModel Tests', () => {
   describe('FilterOption', () => {
@@ -81,7 +81,7 @@ describe('FilterModel Tests', () => {
 
         filters.clear();
 
-        expect(filters.filterChanges.next).not.toBeCalled();
+        expect(filters.filterChanges.next).not.toHaveBeenCalled();
         expect(filters.filterOptions).toMatchObject([]);
       });
       it('removes empty filters and emits next element', () => {
@@ -128,7 +128,7 @@ describe('FilterModel Tests', () => {
         const result = filters.addFilter('foo', 'existingFoo1', 'existingFoo2');
 
         expect(result).toBe(false);
-        expect(filters.filterChanges.next).not.toBeCalled();
+        expect(filters.filterChanges.next).not.toHaveBeenCalled();
         expect(filters.filterOptions).toMatchObject([{ name: 'foo', values: ['existingFoo1', 'existingFoo2'] }]);
       });
     });
@@ -151,7 +151,7 @@ describe('FilterModel Tests', () => {
         const result = filters.removeFilter('foo', 'nonExisting1');
 
         expect(result).toBe(false);
-        expect(filters.filterChanges.next).not.toBeCalled();
+        expect(filters.filterChanges.next).not.toHaveBeenCalled();
         expect(filters.filterOptions).toMatchObject([{ name: 'foo', values: ['existingFoo1', 'existingFoo2'] }]);
       });
       it("doesn't remove a non existing FilterOptions returns false", () => {
@@ -161,7 +161,7 @@ describe('FilterModel Tests', () => {
         const result = filters.removeFilter('nonExisting', 'nonExisting1');
 
         expect(result).toBe(false);
-        expect(filters.filterChanges.next).not.toBeCalled();
+        expect(filters.filterChanges.next).not.toHaveBeenCalled();
         expect(filters.filterOptions).toMatchObject([{ name: 'foo', values: ['existingFoo1', 'existingFoo2'] }]);
       });
     });

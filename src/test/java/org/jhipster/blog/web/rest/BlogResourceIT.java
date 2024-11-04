@@ -84,7 +84,7 @@ class BlogResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public Blog createEntity(EntityManager em) {
+    public Blog createEntity() {
         Blog blog = new Blog().name(DEFAULT_NAME).handle(DEFAULT_HANDLE);
         Optional<User> user = userRepository.findOneByLogin("user");
         if (user.isPresent()) {
@@ -105,14 +105,13 @@ class BlogResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Blog createUpdatedEntity(EntityManager em) {
-        Blog blog = new Blog().name(UPDATED_NAME).handle(UPDATED_HANDLE);
-        return blog;
+    public static Blog createUpdatedEntity() {
+        return new Blog().name(UPDATED_NAME).handle(UPDATED_HANDLE);
     }
 
     @BeforeEach
     public void initTest() {
-        blog = createEntity(em);
+        blog = createEntity();
     }
 
     @AfterEach

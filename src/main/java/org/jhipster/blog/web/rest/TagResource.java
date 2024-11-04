@@ -32,7 +32,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @Transactional
 public class TagResource {
 
-    private static final Logger log = LoggerFactory.getLogger(TagResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TagResource.class);
 
     private static final String ENTITY_NAME = "tag";
 
@@ -54,7 +54,7 @@ public class TagResource {
      */
     @PostMapping("")
     public ResponseEntity<Tag> createTag(@Valid @RequestBody Tag tag) throws URISyntaxException {
-        log.debug("REST request to save Tag : {}", tag);
+        LOG.debug("REST request to save Tag : {}", tag);
         if (tag.getId() != null) {
             throw new BadRequestAlertException("A new tag cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -77,7 +77,7 @@ public class TagResource {
     @PutMapping("/{id}")
     public ResponseEntity<Tag> updateTag(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Tag tag)
         throws URISyntaxException {
-        log.debug("REST request to update Tag : {}, {}", id, tag);
+        LOG.debug("REST request to update Tag : {}, {}", id, tag);
         if (tag.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -109,7 +109,7 @@ public class TagResource {
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Tag> partialUpdateTag(@PathVariable(value = "id", required = false) final Long id, @NotNull @RequestBody Tag tag)
         throws URISyntaxException {
-        log.debug("REST request to partial update Tag partially : {}, {}", id, tag);
+        LOG.debug("REST request to partial update Tag partially : {}, {}", id, tag);
         if (tag.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -146,7 +146,7 @@ public class TagResource {
      */
     @GetMapping("")
     public ResponseEntity<List<Tag>> getAllTags(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        log.debug("REST request to get a page of Tags");
+        LOG.debug("REST request to get a page of Tags");
         Page<Tag> page = tagRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -160,7 +160,7 @@ public class TagResource {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Tag> getTag(@PathVariable("id") Long id) {
-        log.debug("REST request to get Tag : {}", id);
+        LOG.debug("REST request to get Tag : {}", id);
         Optional<Tag> tag = tagRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(tag);
     }
@@ -173,7 +173,7 @@ public class TagResource {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTag(@PathVariable("id") Long id) {
-        log.debug("REST request to delete Tag : {}", id);
+        LOG.debug("REST request to delete Tag : {}", id);
         tagRepository.deleteById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
