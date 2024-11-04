@@ -1,0 +1,32 @@
+{
+  "health": {
+    "title": "Control de salud",
+    "refresh.button": "Refrescar",
+    "stacktrace": "Stacktrace",
+    "details": {
+      "details": "Detalles",
+      "properties": "Propiedades",
+      "name": "Nombre",
+      "value": "Valor",
+      "error": "Error"
+    },
+    "indicator": {
+      "diskSpace": "Espacio en disco",
+      "mail": "Correo Electrónico",
+      "livenessState": "Liveness state",
+      "readinessState": "Readiness state",
+      "ping": "Aplicación",
+      "db": "Base de Datos"
+    },
+    "table": {
+      "service": "Nombre del servicio",
+      "status": "Estado"
+    },
+    "status": {
+      "UNKNOWN": "DESCONOCIDO",
+      "UP": "LEVANTADO",
+      "OUT_OF_SERVICE": "FUERA_DE_SERVICIO",
+      "DOWN": "CAÍDO"
+    }
+  }
+}
