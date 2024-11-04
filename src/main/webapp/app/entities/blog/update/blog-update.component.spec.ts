@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient, HttpResponse } from '@angular/common/http';
+import { HttpResponse, provideHttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { of, Subject, from } from 'rxjs';
+import { Subject, from, of } from 'rxjs';
 
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/service/user.service';
@@ -49,10 +49,10 @@ describe('Blog Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call User query and add missing value', () => {
       const blog: IBlog = { id: 456 };
-      const user: IUser = { id: 14103 };
+      const user: IUser = { id: 27320 };
       blog.user = user;
 
-      const userCollection: IUser[] = [{ id: 19157 }];
+      const userCollection: IUser[] = [{ id: 11631 }];
       jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
       const additionalUsers = [user];
       const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
@@ -71,7 +71,7 @@ describe('Blog Management Update Component', () => {
 
     it('Should update editForm', () => {
       const blog: IBlog = { id: 456 };
-      const user: IUser = { id: 8287 };
+      const user: IUser = { id: 21067 };
       blog.user = user;
 
       activatedRoute.data = of({ blog });

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -11,7 +11,7 @@ import { IPost } from 'app/entities/post/post.model';
 import { PostService } from 'app/entities/post/service/post.service';
 import { ITag } from '../tag.model';
 import { TagService } from '../service/tag.service';
-import { TagFormService, TagFormGroup } from './tag-form.service';
+import { TagFormGroup, TagFormService } from './tag-form.service';
 
 @Component({
   standalone: true,

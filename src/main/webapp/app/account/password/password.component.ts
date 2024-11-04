@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 import SharedModule from 'app/shared/shared.module';
@@ -31,8 +31,8 @@ export default class PasswordComponent implements OnInit {
     }),
   });
 
-  private passwordService = inject(PasswordService);
-  private accountService = inject(AccountService);
+  private readonly passwordService = inject(PasswordService);
+  private readonly accountService = inject(AccountService);
 
   ngOnInit(): void {
     this.account$ = this.accountService.identity();

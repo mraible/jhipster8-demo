@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -16,7 +16,7 @@ import { ITag } from 'app/entities/tag/tag.model';
 import { TagService } from 'app/entities/tag/service/tag.service';
 import { PostService } from '../service/post.service';
 import { IPost } from '../post.model';
-import { PostFormService, PostFormGroup } from './post-form.service';
+import { PostFormGroup, PostFormService } from './post-form.service';
 
 @Component({
   standalone: true,
@@ -68,7 +68,7 @@ export class PostUpdateComponent implements OnInit {
   setFileData(event: Event, field: string, isImage: boolean): void {
     this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
       error: (err: FileLoadError) =>
-        this.eventManager.broadcast(new EventWithContent<AlertError>('blogApp.error', { ...err, key: 'error.file.' + err.key })),
+        this.eventManager.broadcast(new EventWithContent<AlertError>('blogApp.error', { ...err, key: `error.file.${err.key}` })),
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -30,11 +30,11 @@ export default class NavbarComponent implements OnInit {
   account = inject(AccountService).trackCurrentAccount();
   entitiesNavbarItems: NavbarItem[] = [];
 
-  private loginService = inject(LoginService);
-  private translateService = inject(TranslateService);
-  private stateStorageService = inject(StateStorageService);
-  private profileService = inject(ProfileService);
-  private router = inject(Router);
+  private readonly loginService = inject(LoginService);
+  private readonly translateService = inject(TranslateService);
+  private readonly stateStorageService = inject(StateStorageService);
+  private readonly profileService = inject(ProfileService);
+  private readonly router = inject(Router);
 
   constructor() {
     if (VERSION) {

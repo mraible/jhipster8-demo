@@ -57,5 +57,7 @@ public class BlogAsserts {
      * @param expected the expected entity
      * @param actual the actual entity
      */
-    public static void assertBlogUpdatableRelationshipsEquals(Blog expected, Blog actual) {}
+    public static void assertBlogUpdatableRelationshipsEquals(Blog expected, Blog actual) {
+        // empty method
+    }
 }

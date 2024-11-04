@@ -1,12 +1,12 @@
 import {
-  entityTableSelector,
-  entityDetailsButtonSelector,
-  entityDetailsBackButtonSelector,
-  entityCreateButtonSelector,
-  entityCreateSaveButtonSelector,
-  entityCreateCancelButtonSelector,
-  entityDeleteButtonSelector,
   entityConfirmDeleteButtonSelector,
+  entityCreateButtonSelector,
+  entityCreateCancelButtonSelector,
+  entityCreateSaveButtonSelector,
+  entityDeleteButtonSelector,
+  entityDetailsBackButtonSelector,
+  entityDetailsButtonSelector,
+  entityTableSelector,
 } from '../../support/entity';
 
 describe('Authority e2e test', () => {
@@ -14,7 +14,7 @@ describe('Authority e2e test', () => {
   const authorityPageUrlPattern = new RegExp('/authority(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'admin';
   const password = Cypress.env('E2E_PASSWORD') ?? 'admin';
-  const authoritySample = { name: '0d78682a-67e0-4ca0-a6b1-a84701bd136c' };
+  const authoritySample = { name: 'd0043b9c-cff4-410d-9623-5f113d3440fd' };
 
   let authority;
 
@@ -135,8 +135,8 @@ describe('Authority e2e test', () => {
     });
 
     it('should create an instance of Authority', () => {
-      cy.get(`[data-cy="name"]`).type('bd40538e-4ac0-41bb-baf6-0c572a572ec0');
-      cy.get(`[data-cy="name"]`).should('have.value', 'bd40538e-4ac0-41bb-baf6-0c572a572ec0');
+      cy.get(`[data-cy="name"]`).type('44850b2c-c3eb-4b27-9ca8-aad9d1d5d3d0');
+      cy.get(`[data-cy="name"]`).should('have.value', '44850b2c-c3eb-4b27-9ca8-aad9d1d5d3d0');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

@@ -29,7 +29,8 @@
       <span jhiTranslate="blogApp.post.home.notFound">No Posts found</span>
     </div>
   }
-  @if (posts && posts.length) {
+
+  @if (posts && posts.length > 0) {
     <div class="table-responsive table-entities" id="entities">
       <div infinite-scroll (scrolled)="loadNextPage()" [infiniteScrollDisabled]="!hasMorePage()" [infiniteScrollDistance]="0">
         @for (post of posts; track trackId) {
